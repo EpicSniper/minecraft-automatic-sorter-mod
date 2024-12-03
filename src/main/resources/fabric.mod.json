@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "automatic-sorter-mod",
+	"version": "${version}",
+	"name": "Automatic Sorter",
+	"description": "This is an example description of automatic sorter mod.",
+	"authors": [
+		"Luke Smith!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/automatic-sorter-mod/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"cz.lukesmith.automaticsortermod.AutomaticSorterMod"
+		],
+		"client": [
+			"cz.lukesmith.automaticsortermod.AutomaticSorterModClient"
+		],
+		"fabric-datagen": [
+			"cz.lukesmith.automaticsortermod.AutomaticSorterModDataGenerator"
+		]
+	},
+	"mixins": [
+		"automatic-sorter-mod.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.9",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
