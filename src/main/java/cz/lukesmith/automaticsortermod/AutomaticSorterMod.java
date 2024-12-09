@@ -1,5 +1,7 @@
 package cz.lukesmith.automaticsortermod;
 
+import cz.lukesmith.automaticsortermod.item.ModItemGroups;
+import cz.lukesmith.automaticsortermod.item.ModItems;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ public class AutomaticSorterMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-
+		ModItems.registerItems();
+		ModItemGroups.registerItemGroups();
 	}
 }
