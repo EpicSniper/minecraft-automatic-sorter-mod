@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "automaticsortermod:block/test_block"
+    }
+  }
+}

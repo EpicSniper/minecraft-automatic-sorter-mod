@@ -1,4 +1,6 @@
 {
   "item.automaticsortermod.test_item": "Test Item",
-  "itemGroup.automaticsortermod": "Automatic Sorter Group"
+  "itemGroup.automaticsortermod": "Automatic Sorter Group",
+
+  "block.automaticsortermod.test_block": "Test Block",
 }

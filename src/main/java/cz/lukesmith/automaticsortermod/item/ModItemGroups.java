@@ -16,6 +16,7 @@ public class ModItemGroups {
             FabricItemGroup.builder().displayName(Text.translatable("itemGroup.automatic_sorter_group"))
                     .icon(() -> new ItemStack(ModItems.TEST_ITEM)).entries((displayContext, entries) -> {
                         entries.add(ModItems.TEST_ITEM);
+                        entries.add(ModBlocks.TEST_BLOCK);
                     }).build());
 
     public static void registerItemGroups() {
