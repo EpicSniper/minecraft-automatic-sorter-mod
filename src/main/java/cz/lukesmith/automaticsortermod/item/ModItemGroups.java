@@ -1,6 +1,7 @@
 package cz.lukesmith.automaticsortermod.item;
 
 import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
+import cz.lukesmith.automaticsortermod.block.ModBlocks;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -17,6 +18,7 @@ public class ModItemGroups {
                     .icon(() -> new ItemStack(ModItems.TEST_ITEM)).entries((displayContext, entries) -> {
                         entries.add(ModItems.TEST_ITEM);
                         entries.add(ModBlocks.TEST_BLOCK);
+                        entries.add(ModBlocks.TEST_ENTITY_BLOCK);
                     }).build());
 
     public static void registerItemGroups() {

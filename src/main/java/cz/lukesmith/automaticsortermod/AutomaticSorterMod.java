@@ -1,6 +1,7 @@
 package cz.lukesmith.automaticsortermod;
 
-import cz.lukesmith.automaticsortermod.item.ModBlocks;
+import cz.lukesmith.automaticsortermod.block.ModBlocks;
+import cz.lukesmith.automaticsortermod.block.entity.ModBlockEntities;
 import cz.lukesmith.automaticsortermod.item.ModItemGroups;
 import cz.lukesmith.automaticsortermod.item.ModItems;
 import net.fabricmc.api.ModInitializer;
@@ -18,5 +19,7 @@ public class AutomaticSorterMod implements ModInitializer {
 
 		ModItems.registerItems();
 		ModBlocks.registerModBlocks();
+
+		ModBlockEntities.registerModBlocksEntities();
 	}
 }
