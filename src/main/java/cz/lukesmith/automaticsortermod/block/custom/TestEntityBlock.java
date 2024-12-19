@@ -1,12 +1,14 @@
 package cz.lukesmith.automaticsortermod.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import cz.lukesmith.automaticsortermod.block.entity.ModBlockEntities;
 import cz.lukesmith.automaticsortermod.block.entity.TestEntityBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
@@ -59,11 +61,20 @@ public class TestEntityBlock extends BlockWithEntity implements BlockEntityProvi
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        return super.onUse(state, world, pos, player, hand, hit);
+        if (!world.isClient) {
+            NamedScreenHandlerFactory screenHandlerFactory = ((TestEntityBlockEntity) world.getBlockEntity(pos));
+
+            if (screenHandlerFactory != null) {
+                player.openHandledScreen(screenHandlerFactory);
+            }
+        }
+
+        return ActionResult.SUCCESS;
     }
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return BlockEntityProvider.super.getTicker(world, state, type);
+        return validateTicker(type, ModBlockEntities.TEST_ENTITY_BLOCK_ENTITY,
+                (world1, pos, state1, blockEntity) -> blockEntity.tick(world1, pos, state1));
     }
 }

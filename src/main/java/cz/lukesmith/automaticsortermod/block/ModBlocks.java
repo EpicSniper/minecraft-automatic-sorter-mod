@@ -14,7 +14,7 @@ import net.minecraft.util.Identifier;
 
 public class ModBlocks {
     public static final Block TEST_BLOCK = registerBlock("test_block", new Block(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK)));
-    public static final Block TEST_ENTITY_BLOCK = registerBlock("test_entity_block", new TestEntityBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
+    public static final Block TEST_ENTITY_BLOCK = registerBlock("test_entity", new TestEntityBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
 
 
     private static Block registerBlock(String name, Block block) {
