@@ -22,6 +22,10 @@ public class TestEntityBlockEntity extends BlockEntity implements ExtendedScreen
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(9, ItemStack.EMPTY);
 
+    private static int transferCooldown = 0;
+
+    private static final int TRANSFER_COOLDOWN = 10;
+
     public TestEntityBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.TEST_ENTITY_BLOCK_ENTITY, pos, state);
     }
@@ -67,32 +71,41 @@ public class TestEntityBlockEntity extends BlockEntity implements ExtendedScreen
             return; // Tick metoda se neprovádí na klientské straně
         }
 
-        // Detekuj blok nad a pod tímto blokem
-        BlockPos abovePos = pos.up(); // Blok nad
-        BlockPos belowPos = pos.down(); // Blok pod
+        if (transferCooldown >= TRANSFER_COOLDOWN) {
+            // Detekuj blok nad a pod tímto blokem
+            BlockPos abovePos = pos.up(); // Blok nad
+            BlockPos belowPos = pos.down(); // Blok pod
 
-        // Získání entity bloku nad a pod
-        BlockEntity aboveEntity = world.getBlockEntity(abovePos);
-        BlockEntity belowEntity = world.getBlockEntity(belowPos);
+            // Získání entity bloku nad a pod
+            BlockEntity aboveEntity = world.getBlockEntity(abovePos);
+            BlockEntity belowEntity = world.getBlockEntity(belowPos);
 
-        // Zkontroluj, zda nad je inventář
-        if (aboveEntity instanceof Inventory aboveInventory) {
-            // Zkontroluj, zda pod je inventář
-            if (belowEntity instanceof Inventory belowInventory) {
-                // Přesuň itemy z horního inventáře do spodního
-                transferItems(aboveInventory, belowInventory);
+            // Zkontroluj, zda nad je inventář
+            if (aboveEntity instanceof Inventory aboveInventory) {
+                // Zkontroluj, zda pod je inventář
+                if (belowEntity instanceof Inventory belowInventory) {
+                    // Přesuň itemy z horního inventáře do spodního
+                    transferItem(aboveInventory, belowInventory);
+                }
             }
+
+            transferCooldown = 0;
         }
+
+        transferCooldown++;
     }
 
-    private static void transferItems(Inventory from, Inventory to) {
-        // Prochází všechny sloty v horním inventáři
+    private static void transferItem(Inventory from, Inventory to) {
         for (int i = 0; i < from.size(); i++) {
             ItemStack stack = from.getStack(i);
             if (!stack.isEmpty()) {
-                // Přidej stack do dolního inventáře
-                ItemStack remaining = addToInventory(to, stack);
-                from.setStack(i, remaining); // Aktualizuj zbývající stack
+                ItemStack singleItem = stack.split(1); // Remove one item from the current stack
+                ItemStack remaining = addToInventory(to, singleItem);
+                if (!remaining.isEmpty()) {
+                    stack.increment(1); // If insertion failed, return the item back to the original stack
+                }
+                from.setStack(i, stack);
+                break; // Transfer only one item, so break the loop
             }
         }
     }
@@ -101,11 +114,9 @@ public class TestEntityBlockEntity extends BlockEntity implements ExtendedScreen
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack slotStack = inventory.getStack(i);
             if (slotStack.isEmpty()) {
-                // Přidej celý stack do prázdného slotu
                 inventory.setStack(i, stack);
                 return ItemStack.EMPTY;
             } else if (ItemStack.canCombine(slotStack, stack)) {
-                // Přidej k existujícímu stacku
                 int maxInsert = Math.min(stack.getCount(), slotStack.getMaxCount() - slotStack.getCount());
                 slotStack.increment(maxInsert);
                 stack.decrement(maxInsert);
@@ -114,6 +125,6 @@ public class TestEntityBlockEntity extends BlockEntity implements ExtendedScreen
                 }
             }
         }
-        return stack; // Zbývající itemy, pokud nebylo místo
+        return stack;
     }
 }
