@@ -12,6 +12,10 @@ public class ModBlockEntities {
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(AutomaticSorterMod.MOD_ID, "test_entity_be"),
                     BlockEntityType.Builder.create(TestEntityBlockEntity::create, ModBlocks.TEST_ENTITY_BLOCK).build(null));
 
+    public static final BlockEntityType<SorterControllerBlockEntity> SORTER_CONTROLLER_BLOCK_ENTITY =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(AutomaticSorterMod.MOD_ID, "sorter_controller_be"),
+                    BlockEntityType.Builder.create(SorterControllerBlockEntity::create, ModBlocks.SORTER_CONTROLLER_BLOCK).build(null));
+
     public static void registerModBlocksEntities() {
         AutomaticSorterMod.LOGGER.info("Registering ModBlocksEntities for " + AutomaticSorterMod.MOD_ID);
     }

@@ -2,6 +2,7 @@ package cz.lukesmith.automaticsortermod.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import cz.lukesmith.automaticsortermod.block.entity.ModBlockEntities;
+import cz.lukesmith.automaticsortermod.block.entity.SorterControllerBlockEntity;
 import cz.lukesmith.automaticsortermod.block.entity.TestEntityBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -19,13 +20,9 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class TestEntityBlock extends BlockWithEntity implements BlockEntityProvider {
+public class SorterControllerBlock extends BlockWithEntity implements BlockEntityProvider {
 
-    private static final VoxelShape SHAPE = createCuboidShape(0, 0, 0, 16, 8, 16);
-
-    public TestEntityBlock(Settings settings) {
-        super(settings);
-    }
+    private static final VoxelShape SHAPE = createCuboidShape(0, 0, 0, 16, 16, 16);
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -37,6 +34,10 @@ public class TestEntityBlock extends BlockWithEntity implements BlockEntityProvi
         return BlockRenderType.MODEL;
     }
 
+    public SorterControllerBlock(Settings settings) {
+        super(settings);
+    }
+
     @Override
     protected MapCodec<? extends BlockWithEntity> getCodec() {
         return null;
@@ -44,7 +45,7 @@ public class TestEntityBlock extends BlockWithEntity implements BlockEntityProvi
 
     @Override
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new TestEntityBlockEntity(pos, state);
+        return new SorterControllerBlockEntity(pos, state);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class TestEntityBlock extends BlockWithEntity implements BlockEntityProvi
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return validateTicker(type, ModBlockEntities.TEST_ENTITY_BLOCK_ENTITY,
-                (world1, pos, state1, blockEntity) -> TestEntityBlockEntity.tick(world1, pos, state1));
+        return validateTicker(type, ModBlockEntities.SORTER_CONTROLLER_BLOCK_ENTITY,
+                (world1, pos, state1, blockEntity) -> SorterControllerBlockEntity.tick(world1, pos, state1));
     }
 }
