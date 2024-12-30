@@ -22,6 +22,7 @@ public class ModItemGroups {
 
                         entries.add(ModBlocks.PIPE_BLOCK);
                         entries.add(ModBlocks.SORTER_CONTROLLER_BLOCK);
+                        entries.add(ModBlocks.FILTER_BLOCK);
                     }).build());
 
     public static void registerItemGroups() {

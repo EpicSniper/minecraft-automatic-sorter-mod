@@ -19,6 +19,7 @@ public class ModBlocks {
     public static final Block TEST_ENTITY_BLOCK = registerBlock("test_entity", new TestEntityBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
     public static final Block PIPE_BLOCK = registerBlock("pipe", new PipeBlock(FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).nonOpaque()));
     public static final Block SORTER_CONTROLLER_BLOCK = registerBlock("sorter_controller", new SorterControllerBlock(FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).nonOpaque()));
+    public static final Block FILTER_BLOCK = registerBlock("filter", new SorterControllerBlock(FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).nonOpaque()));
 
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);
