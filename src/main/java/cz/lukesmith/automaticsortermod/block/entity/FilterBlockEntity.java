@@ -48,6 +48,6 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
 
     @Override
     public DefaultedList<ItemStack> getItems() {
-        return null;
+        return DefaultedList.ofSize(1, ItemStack.EMPTY);
     }
 }

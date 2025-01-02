@@ -1,5 +1,6 @@
 package cz.lukesmith.automaticsortermod.block.entity;
 
+import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import cz.lukesmith.automaticsortermod.block.custom.FilterBlock;
 import cz.lukesmith.automaticsortermod.block.custom.PipeBlock;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -33,6 +34,26 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         return new SorterControllerBlockEntity(pos, state);
     }
 
+    @Override
+    public DefaultedList<ItemStack> getItems() {
+        return DefaultedList.ofSize(1, ItemStack.EMPTY);
+    }
+
+    @Override
+    public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
+
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return null;
+    }
+
+    @Override
+    public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+        return null;
+    }
+
     public static void tick(World world, BlockPos pos, BlockState state) {
         if (world.isClient) {
             return;
@@ -40,6 +61,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
 
         Set<BlockPos> connectedPipes = findConnectedPipes(world, pos);
         Set<BlockPos> connectedFilters = findConnectedFilters(world, connectedPipes);
+        AutomaticSorterMod.LOGGER.info("Connected pipes: " + connectedFilters);
     }
 
     private static Set<BlockPos> findConnectedPipes(World world, BlockPos startPos) {
@@ -78,25 +100,5 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         }
 
         return filterPositions;
-    }
-
-    @Override
-    public DefaultedList<ItemStack> getItems() {
-        return null;
-    }
-
-    @Override
-    public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
-
-    }
-
-    @Override
-    public Text getDisplayName() {
-        return null;
-    }
-
-    @Override
-    public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return null;
     }
 }

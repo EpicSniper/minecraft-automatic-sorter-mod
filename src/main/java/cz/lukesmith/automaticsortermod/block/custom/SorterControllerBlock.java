@@ -3,7 +3,6 @@ package cz.lukesmith.automaticsortermod.block.custom;
 import com.mojang.serialization.MapCodec;
 import cz.lukesmith.automaticsortermod.block.entity.ModBlockEntities;
 import cz.lukesmith.automaticsortermod.block.entity.SorterControllerBlockEntity;
-import cz.lukesmith.automaticsortermod.block.entity.TestEntityBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -52,8 +51,8 @@ public class SorterControllerBlock extends BlockWithEntity implements BlockEntit
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof TestEntityBlockEntity) {
-                ItemScatterer.spawn(world, pos, (TestEntityBlockEntity)blockEntity);
+            if (blockEntity instanceof SorterControllerBlockEntity) {
+                ItemScatterer.spawn(world, pos, (SorterControllerBlockEntity) blockEntity);
                 world.updateComparators(pos,this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);
@@ -63,7 +62,7 @@ public class SorterControllerBlock extends BlockWithEntity implements BlockEntit
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
-            NamedScreenHandlerFactory screenHandlerFactory = ((TestEntityBlockEntity) world.getBlockEntity(pos));
+            NamedScreenHandlerFactory screenHandlerFactory = ((SorterControllerBlockEntity) world.getBlockEntity(pos));
 
             if (screenHandlerFactory != null) {
                 player.openHandledScreen(screenHandlerFactory);
