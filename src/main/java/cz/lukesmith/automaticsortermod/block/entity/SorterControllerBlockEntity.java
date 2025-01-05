@@ -1,13 +1,14 @@
 package cz.lukesmith.automaticsortermod.block.entity;
 
-import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import cz.lukesmith.automaticsortermod.block.custom.FilterBlock;
 import cz.lukesmith.automaticsortermod.block.custom.PipeBlock;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
@@ -61,7 +62,53 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
 
         Set<BlockPos> connectedPipes = findConnectedPipes(world, pos);
         Set<BlockPos> connectedFilters = findConnectedFilters(world, connectedPipes);
-        AutomaticSorterMod.LOGGER.info("Connected pipes: " + connectedFilters);
+
+        BlockPos rootChestPos = pos.up();
+        BlockEntity rootChestEntity = world.getBlockEntity(rootChestPos);
+
+        if (rootChestEntity instanceof Inventory rootChestInventory) {
+            for (BlockPos filterPos : connectedFilters) {
+                Direction filterDirection = world.getBlockState(filterPos).get(FilterBlock.FACING);
+                BlockPos chestPos = filterPos.offset(filterDirection);
+                BlockEntity chestEntityPost = world.getBlockEntity(chestPos);
+                if (chestEntityPost instanceof ChestBlockEntity chestEntity) {
+                    transferItem(rootChestInventory, chestEntity);
+                }
+            }
+        }
+    }
+
+    private static void transferItem(Inventory from, Inventory to) {
+        for (int i = 0; i < from.size(); i++) {
+            ItemStack stack = from.getStack(i);
+            if (!stack.isEmpty()) {
+                ItemStack singleItem = stack.split(1); // Remove one item from the current stack
+                ItemStack remaining = addToInventory(to, singleItem);
+                if (!remaining.isEmpty()) {
+                    stack.increment(1); // If insertion failed, return the item back to the original stack
+                }
+                from.setStack(i, stack);
+                break; // Transfer only one item, so break the loop
+            }
+        }
+    }
+
+    private static ItemStack addToInventory(Inventory inventory, ItemStack stack) {
+        for (int i = 0; i < inventory.size(); i++) {
+            ItemStack slotStack = inventory.getStack(i);
+            if (slotStack.isEmpty()) {
+                inventory.setStack(i, stack);
+                return ItemStack.EMPTY;
+            } else if (ItemStack.canCombine(slotStack, stack)) {
+                int maxInsert = Math.min(stack.getCount(), slotStack.getMaxCount() - slotStack.getCount());
+                slotStack.increment(maxInsert);
+                stack.decrement(maxInsert);
+                if (stack.isEmpty()) {
+                    return ItemStack.EMPTY;
+                }
+            }
+        }
+        return stack;
     }
 
     private static Set<BlockPos> findConnectedPipes(World world, BlockPos startPos) {
