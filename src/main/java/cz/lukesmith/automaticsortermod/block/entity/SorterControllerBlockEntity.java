@@ -73,6 +73,9 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                 BlockEntity chestEntityPost = world.getBlockEntity(chestPos);
                 if (chestEntityPost instanceof ChestBlockEntity chestEntity) {
                     transferItem(rootChestInventory, chestEntity);
+                    rootChestEntity.markDirty();
+                    chestEntity.markDirty();
+                    break;
                 }
             }
         }

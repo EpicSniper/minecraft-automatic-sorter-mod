@@ -1,8 +1,7 @@
 {
-  "item.automaticsortermod.test_item": "Test Item",
-  "itemGroup.automaticsortermod": "Automatic Sorter Group",
-
-  "block.automaticsortermod.test_block": "Test Block",
-  "block.automaticsortermod.test_entity": "Test Entity",
-  "block.automaticsortermod.pipe": "Pipe"
+  "itemGroup.automatic_sorter_group": "Automatic Sorter Group",
+  "block.automaticsortermod.pipe": "Pipe",
+  "block.automaticsortermod.filter": "Filter",
+  "block.automaticsortermod.sorter_controller": "Sorter Controller",
+  "automaticsortermod.filter_block_entity": "Filter"
 }
