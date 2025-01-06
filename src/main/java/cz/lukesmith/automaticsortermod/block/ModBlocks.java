@@ -4,7 +4,6 @@ import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import cz.lukesmith.automaticsortermod.block.custom.FilterBlock;
 import cz.lukesmith.automaticsortermod.block.custom.PipeBlock;
 import cz.lukesmith.automaticsortermod.block.custom.SorterControllerBlock;
-import cz.lukesmith.automaticsortermod.block.custom.TestEntityBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
@@ -16,8 +15,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class ModBlocks {
-    public static final Block TEST_BLOCK = registerBlock("test_block", new Block(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK)));
-    public static final Block TEST_ENTITY_BLOCK = registerBlock("test_entity", new TestEntityBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
     public static final Block PIPE_BLOCK = registerBlock("pipe", new PipeBlock(FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).nonOpaque()));
     public static final Block SORTER_CONTROLLER_BLOCK = registerBlock("sorter_controller", new SorterControllerBlock(FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).nonOpaque()));
     public static final Block FILTER_BLOCK = registerBlock("filter", new FilterBlock(FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).nonOpaque()));
