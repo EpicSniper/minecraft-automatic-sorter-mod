@@ -72,28 +72,33 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                 BlockPos chestPos = filterPos.offset(filterDirection);
                 BlockEntity chestEntityPost = world.getBlockEntity(chestPos);
                 if (chestEntityPost instanceof ChestBlockEntity chestEntity) {
-                    transferItem(rootChestInventory, chestEntity);
-                    rootChestEntity.markDirty();
-                    chestEntity.markDirty();
-                    break;
+                    if (transferItem(rootChestInventory, chestEntity)) {
+                        rootChestEntity.markDirty();
+                        chestEntity.markDirty();
+                        break;
+                    }
                 }
             }
         }
     }
 
-    private static void transferItem(Inventory from, Inventory to) {
+    private static boolean transferItem(Inventory from, Inventory to) {
         for (int i = 0; i < from.size(); i++) {
             ItemStack stack = from.getStack(i);
             if (!stack.isEmpty()) {
                 ItemStack singleItem = stack.split(1); // Remove one item from the current stack
                 ItemStack remaining = addToInventory(to, singleItem);
-                if (!remaining.isEmpty()) {
-                    stack.increment(1); // If insertion failed, return the item back to the original stack
+
+                if (remaining.isEmpty()) {
+                    from.setStack(i, stack);
+                    return true; // Item was successfully transferred
+                } else {
+                    stack.increment(1); // Revert the split if the item was not transferred
+                    from.setStack(i, stack);
                 }
-                from.setStack(i, stack);
-                break; // Transfer only one item, so break the loop
             }
         }
+        return false;
     }
 
     private static ItemStack addToInventory(Inventory inventory, ItemStack stack) {
