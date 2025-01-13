@@ -83,7 +83,7 @@ public class FilterBlock extends BlockWithEntity implements BlockEntityProvider 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return validateTicker(type, ModBlockEntities.FILTER_BLOCK_ENTITY,
-                (world1, pos, state1, blockEntity) -> FilterBlockEntity.tick(world1, pos, state1));
+                (world1, pos, state1, blockEntity) -> blockEntity.tick(world1, pos, state1));
     }
 
     @Override

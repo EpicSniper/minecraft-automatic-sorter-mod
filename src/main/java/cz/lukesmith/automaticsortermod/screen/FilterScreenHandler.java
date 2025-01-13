@@ -1,5 +1,6 @@
 package cz.lukesmith.automaticsortermod.screen;
 
+import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import cz.lukesmith.automaticsortermod.block.entity.FilterBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -7,6 +8,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.ArrayPropertyDelegate;
+import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
@@ -14,19 +17,21 @@ public class FilterScreenHandler extends ScreenHandler {
 
     private final Inventory inventory;
     public final FilterBlockEntity blockEntity;
+    private final PropertyDelegate propertyDelegate;
 
 
     public FilterScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
-        this(syncId, inventory, inventory.player.getWorld().getBlockEntity(buf.readBlockPos()));
+        this(syncId, inventory, inventory.player.getWorld().getBlockEntity(buf.readBlockPos()), new ArrayPropertyDelegate(1));
     }
 
     public FilterScreenHandler(int syncId, PlayerInventory playerInventory,
-                               BlockEntity blockEntity) {
+                               BlockEntity blockEntity, PropertyDelegate propertyDelegate) {
         super(ModScreenHandlers.FILTER_SCREEN_HANDLER, syncId);
         checkSize(((Inventory) blockEntity), 9);
         this.inventory = ((Inventory) blockEntity);
         inventory.onOpen(playerInventory.player);
         this.blockEntity = ((FilterBlockEntity) blockEntity);
+        this.propertyDelegate = propertyDelegate;
 
         // Pridat sloty
         this.addSlot(new Slot(inventory, 0, 62, 15));
@@ -42,6 +47,8 @@ public class FilterScreenHandler extends ScreenHandler {
 
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
+
+        addProperties(propertyDelegate);
     }
 
     @Override
@@ -86,5 +93,15 @@ public class FilterScreenHandler extends ScreenHandler {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
         }
+    }
+
+    public int getReceiveItems() {
+        AutomaticSorterMod.LOGGER.info("Get Receive Items: " + propertyDelegate.get(0));
+        return propertyDelegate.get(0);
+    }
+
+    public void setReceiveItems(int value) {
+        AutomaticSorterMod.LOGGER.info("Set Receive Items: " + value);
+        propertyDelegate.set(0, value);
     }
 }

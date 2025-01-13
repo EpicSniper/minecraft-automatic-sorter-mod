@@ -1,5 +1,6 @@
 package cz.lukesmith.automaticsortermod.block.entity;
 
+import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import cz.lukesmith.automaticsortermod.block.custom.FilterBlock;
 import cz.lukesmith.automaticsortermod.block.custom.PipeBlock;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -55,7 +56,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         return null;
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state) {
+    public void tick(World world, BlockPos pos, BlockState state) {
         if (world.isClient) {
             return;
         }
@@ -72,10 +73,18 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                 BlockPos chestPos = filterPos.offset(filterDirection);
                 BlockEntity chestEntityPost = world.getBlockEntity(chestPos);
                 if (chestEntityPost instanceof ChestBlockEntity chestEntity) {
-                    if (transferItem(rootChestInventory, chestEntity)) {
-                        rootChestEntity.markDirty();
-                        chestEntity.markDirty();
-                        break;
+                    BlockEntity filterEntity = world.getBlockEntity(filterPos);
+                    if (filterEntity instanceof FilterBlockEntity filterBlockEntity) {
+                        int receiveItems = filterBlockEntity.getReceiveItems();
+                        // Use the receiveItems value as needed
+                        AutomaticSorterMod.LOGGER.info("Receive Items: " + receiveItems);
+                        if (receiveItems > 0) {
+                            if (transferItem(rootChestInventory, chestEntity)) {
+                                rootChestEntity.markDirty();
+                                chestEntity.markDirty();
+                                break;
+                            }
+                        }
                     }
                 }
             }

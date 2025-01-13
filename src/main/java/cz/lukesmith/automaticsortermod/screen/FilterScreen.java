@@ -2,10 +2,14 @@ package cz.lukesmith.automaticsortermod.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -21,6 +25,17 @@ public class FilterScreen extends HandledScreen<FilterScreenHandler> {
         super.init();
         titleY = 1000;
         playerInventoryTitleY = 1000;
+
+        this.addDrawableChild(ButtonWidget.builder(Text.of("Set Receive Items"), button -> {
+            handler.setReceiveItems(1); // Set the value of receiveItems to 1
+            sendReceiveItemsUpdate(1);
+        }).dimensions(this.x + 10, this.y + 10, 100, 20).build());
+    }
+
+    private void sendReceiveItemsUpdate(int value) {
+        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+        buf.writeInt(value);
+        ClientPlayNetworking.send(new Identifier("automaticsortermod", "update_receive_items"), buf);
     }
 
     @Override
