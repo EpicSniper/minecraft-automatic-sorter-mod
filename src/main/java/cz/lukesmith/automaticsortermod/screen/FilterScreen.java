@@ -27,12 +27,12 @@ public class FilterScreen extends HandledScreen<FilterScreenHandler> {
         playerInventoryTitleY = 1000;
 
         this.addDrawableChild(ButtonWidget.builder(Text.of("Set Receive Items"), button -> {
-            handler.setReceiveItems(1); // Set the value of receiveItems to 1
-            sendReceiveItemsUpdate(1);
+            int value = handler.toggleCanReceiveItems(); // Set the value of canReceiveItems to 1
+            sendCanReceiveItemsUpdate(value);
         }).dimensions(this.x + 10, this.y + 10, 100, 20).build());
     }
 
-    private void sendReceiveItemsUpdate(int value) {
+    private void sendCanReceiveItemsUpdate(int value) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeInt(value);
         ClientPlayNetworking.send(new Identifier("automaticsortermod", "update_receive_items"), buf);

@@ -1,6 +1,5 @@
 package cz.lukesmith.automaticsortermod.block.entity;
 
-import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import cz.lukesmith.automaticsortermod.block.custom.FilterBlock;
 import cz.lukesmith.automaticsortermod.block.custom.PipeBlock;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -27,6 +26,9 @@ import java.util.Queue;
 import java.util.Set;
 
 public class SorterControllerBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
+
+    private static int ticker = 0;
+    private static final int MAX_TICKER = 5;
 
     public SorterControllerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SORTER_CONTROLLER_BLOCK_ENTITY, pos, state);
@@ -61,6 +63,11 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
             return;
         }
 
+        if (ticker > 0) {
+            ticker--;
+            return;
+        }
+
         Set<BlockPos> connectedPipes = findConnectedPipes(world, pos);
         Set<BlockPos> connectedFilters = findConnectedFilters(world, connectedPipes);
 
@@ -75,10 +82,8 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                 if (chestEntityPost instanceof ChestBlockEntity chestEntity) {
                     BlockEntity filterEntity = world.getBlockEntity(filterPos);
                     if (filterEntity instanceof FilterBlockEntity filterBlockEntity) {
-                        int receiveItems = filterBlockEntity.getReceiveItems();
-                        // Use the receiveItems value as needed
-                        AutomaticSorterMod.LOGGER.info("Receive Items: " + receiveItems);
-                        if (receiveItems > 0) {
+                        int canReceiveItems = filterBlockEntity.getCanReceiveItems();
+                        if (canReceiveItems > 0) {
                             if (transferItem(rootChestInventory, chestEntity)) {
                                 rootChestEntity.markDirty();
                                 chestEntity.markDirty();
@@ -89,6 +94,8 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                 }
             }
         }
+
+        ticker = MAX_TICKER;
     }
 
     private static boolean transferItem(Inventory from, Inventory to) {

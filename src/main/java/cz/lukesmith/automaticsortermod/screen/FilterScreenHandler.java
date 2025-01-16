@@ -1,6 +1,5 @@
 package cz.lukesmith.automaticsortermod.screen;
 
-import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import cz.lukesmith.automaticsortermod.block.entity.FilterBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -95,13 +94,13 @@ public class FilterScreenHandler extends ScreenHandler {
         }
     }
 
-    public int getReceiveItems() {
-        AutomaticSorterMod.LOGGER.info("Get Receive Items: " + propertyDelegate.get(0));
+    public int getCanReceiveItems() {
         return propertyDelegate.get(0);
     }
 
-    public void setReceiveItems(int value) {
-        AutomaticSorterMod.LOGGER.info("Set Receive Items: " + value);
+    public int toggleCanReceiveItems() {
+        int value = this.getCanReceiveItems() == 0 ? 1 : 0;
         propertyDelegate.set(0, value);
+        return value;
     }
 }

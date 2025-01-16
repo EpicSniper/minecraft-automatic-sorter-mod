@@ -25,7 +25,7 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(9, ItemStack.EMPTY);
 
-    private int receiveItems = 0;
+    private int canReceiveItems = 0;
 
     public FilterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.FILTER_BLOCK_ENTITY, pos, state);
@@ -39,14 +39,14 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
-        nbt.putInt("ReceiveItems", receiveItems);
+        nbt.putInt("CanReceiveItems", canReceiveItems);
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
-        receiveItems = nbt.getInt("ReceiveItems");
+        canReceiveItems = nbt.getInt("CanReceiveItems");
     }
 
     public static FilterBlockEntity create(BlockPos pos, BlockState state) {
@@ -68,20 +68,16 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
         return new FilterScreenHandler(syncId, playerInventory, this, new PropertyDelegate() {
             @Override
             public int get(int index) {
-                AutomaticSorterMod.LOGGER.info("Get receive items: " + FilterBlockEntity.this.receiveItems + index);
                 if (index == 0) {
-                    return FilterBlockEntity.this.receiveItems;
+                    return FilterBlockEntity.this.canReceiveItems;
                 }
                 return 0;
             }
 
             @Override
             public void set(int index, int value) {
-                AutomaticSorterMod.LOGGER.info("Set receive items to: " + value);
-                AutomaticSorterMod.LOGGER.info("Index: " + index);
-                AutomaticSorterMod.LOGGER.info("Orig: " + FilterBlockEntity.this.receiveItems);
                 if (index == 0) {
-                    FilterBlockEntity.this.receiveItems = value;
+                    FilterBlockEntity.this.canReceiveItems = value;
                 }
             }
 
@@ -96,12 +92,10 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
         if (world.isClient) {
             return; // Tick metoda se neprovádí na klientské straně
         }
-
-        AutomaticSorterMod.LOGGER.info("Receive items on Entity: " + this.receiveItems);
     }
 
-    public int getReceiveItems() {
-        return receiveItems;
+    public int getCanReceiveItems() {
+        return canReceiveItems;
     }
 
     @Override
@@ -112,7 +106,7 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
         }
     }
 
-    public void setReceiveItems(int receiveItems) {
-        this.receiveItems = receiveItems;
+    public void setCanReceiveItems(int canReceiveItems) {
+        this.canReceiveItems = canReceiveItems;
     }
 }
