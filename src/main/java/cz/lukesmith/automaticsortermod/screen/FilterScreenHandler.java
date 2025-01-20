@@ -94,12 +94,12 @@ public class FilterScreenHandler extends ScreenHandler {
         }
     }
 
-    public int getCanReceiveItems() {
+    public int getFilterType() {
         return propertyDelegate.get(0);
     }
 
-    public int toggleCanReceiveItems() {
-        int value = this.getCanReceiveItems() == 0 ? 1 : 0;
+    public int toggleFilterType() {
+        int value = FilterBlockEntity.FilterTypeEnum.nextValue(this.getFilterType());
         propertyDelegate.set(0, value);
         return value;
     }

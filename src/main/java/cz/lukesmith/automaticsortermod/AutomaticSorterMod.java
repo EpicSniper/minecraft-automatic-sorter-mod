@@ -29,7 +29,7 @@ public class AutomaticSorterMod implements ModInitializer {
             int value = buf.readInt();
             server.execute(() -> {
                 if (player.currentScreenHandler instanceof FilterScreenHandler screenHandler) {
-                    screenHandler.blockEntity.setCanReceiveItems(value);
+                    screenHandler.blockEntity.setFilterType(value);
                     screenHandler.blockEntity.markDirty();
                 }
             });

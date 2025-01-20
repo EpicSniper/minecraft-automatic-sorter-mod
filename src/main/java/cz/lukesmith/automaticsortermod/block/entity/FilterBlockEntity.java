@@ -25,7 +25,7 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(9, ItemStack.EMPTY);
 
-    private int canReceiveItems = 0;
+    private int filterType = FilterTypeEnum.BLACKLIST.getValue();
 
     public FilterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.FILTER_BLOCK_ENTITY, pos, state);
@@ -39,14 +39,14 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
-        nbt.putInt("CanReceiveItems", canReceiveItems);
+        nbt.putInt("FilterType", filterType);
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
-        canReceiveItems = nbt.getInt("CanReceiveItems");
+        filterType = nbt.getInt("FilterType");
     }
 
     public static FilterBlockEntity create(BlockPos pos, BlockState state) {
@@ -69,7 +69,7 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
             @Override
             public int get(int index) {
                 if (index == 0) {
-                    return FilterBlockEntity.this.canReceiveItems;
+                    return FilterBlockEntity.this.filterType;
                 }
                 return 0;
             }
@@ -77,7 +77,7 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
             @Override
             public void set(int index, int value) {
                 if (index == 0) {
-                    FilterBlockEntity.this.canReceiveItems = value;
+                    FilterBlockEntity.this.filterType = value;
                 }
             }
 
@@ -94,8 +94,8 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
         }
     }
 
-    public int getCanReceiveItems() {
-        return canReceiveItems;
+    public int getFilterType() {
+        return filterType;
     }
 
     @Override
@@ -106,7 +106,48 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
         }
     }
 
-    public void setCanReceiveItems(int canReceiveItems) {
-        this.canReceiveItems = canReceiveItems;
+    public void setFilterType(int filterType) {
+        this.filterType = filterType;
+    }
+
+    public enum FilterTypeEnum {
+        BLACKLIST(0),
+        WHITELIST(1),
+        IN_INVENTORY(2);
+
+        private final int value;
+
+        FilterTypeEnum(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static FilterTypeEnum fromValue(int value) {
+            for (FilterTypeEnum type : values()) {
+                if (type.getValue() == value) {
+                    return type;
+                }
+            }
+            throw new IllegalArgumentException("Unknown enum value: " + value);
+        }
+
+        public static int nextValue(int number) {
+            return (number + 1) % values().length;
+        }
+
+        public static String getName(FilterTypeEnum type) {
+            return switch (type) {
+                case BLACKLIST -> "Blacklist";
+                case WHITELIST -> "Whitelist";
+                case IN_INVENTORY -> "In Inventory";
+            };
+        }
+
+        public static String getName(int value) {
+            return getName(fromValue(value));
+        }
     }
 }

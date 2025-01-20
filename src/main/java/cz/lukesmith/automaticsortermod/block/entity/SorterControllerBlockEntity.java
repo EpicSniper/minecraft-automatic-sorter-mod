@@ -82,8 +82,18 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                 if (chestEntityPost instanceof ChestBlockEntity chestEntity) {
                     BlockEntity filterEntity = world.getBlockEntity(filterPos);
                     if (filterEntity instanceof FilterBlockEntity filterBlockEntity) {
-                        int canReceiveItems = filterBlockEntity.getCanReceiveItems();
-                        if (canReceiveItems > 0) {
+                        int filterType = filterBlockEntity.getFilterType();
+                        switch (FilterBlockEntity.FilterTypeEnum.fromValue(filterType)) {
+                            case BLACKLIST:
+                                break;
+                            case WHITELIST:
+                                break;
+                            case IN_INVENTORY:
+                                break;
+                            default:
+                                break;
+                        }
+                        if (filterType > 0) {
                             if (transferItem(rootChestInventory, chestEntity)) {
                                 rootChestEntity.markDirty();
                                 chestEntity.markDirty();
