@@ -83,22 +83,23 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                     BlockEntity filterEntity = world.getBlockEntity(filterPos);
                     if (filterEntity instanceof FilterBlockEntity filterBlockEntity) {
                         int filterType = filterBlockEntity.getFilterType();
+                        boolean itemTransfered = false;
                         switch (FilterBlockEntity.FilterTypeEnum.fromValue(filterType)) {
                             case BLACKLIST:
+                                itemTransfered = transferNotBlacklistedItem(rootChestInventory, chestEntity, filterBlockEntity);
                                 break;
                             case WHITELIST:
+                                itemTransfered = transferWhitelistItem(rootChestInventory, chestEntity, filterBlockEntity);
                                 break;
                             case IN_INVENTORY:
+                                itemTransfered = transferCommonItem(rootChestInventory, chestEntity);
                                 break;
                             default:
-                                break;
+                                throw new IllegalStateException("Unexpected value: " + FilterBlockEntity.FilterTypeEnum.fromValue(filterType));
                         }
-                        if (filterType > 0) {
-                            if (transferItem(rootChestInventory, chestEntity)) {
-                                rootChestEntity.markDirty();
-                                chestEntity.markDirty();
-                                break;
-                            }
+
+                        if (itemTransfered) {
+                            break;
                         }
                     }
                 }
@@ -108,6 +109,57 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         ticker = MAX_TICKER;
     }
 
+    private static boolean transferWhitelistItem(Inventory from, Inventory to, FilterBlockEntity filterBlockEntity) {
+        for (int i = 0; i < from.size(); i++) {
+            ItemStack stack = from.getStack(i);
+            if (!stack.isEmpty()) {
+                ItemStack singleItem = stack.split(1); // Remove one item from the current stack
+                if (filterBlockEntity.isItemAllowed(singleItem)) {
+                    ItemStack remaining = addToInventory(to, singleItem);
+
+                    if (remaining.isEmpty()) {
+                        from.setStack(i, stack);
+                        return true; // Item was successfully transferred
+                    } else {
+                        stack.increment(1); // Revert the split if the item was not transferred
+                        from.setStack(i, stack);
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean transferNotBlacklistedItem(Inventory from, Inventory to, FilterBlockEntity filterBlockEntity) {
+        for (int i = 0; i < from.size(); i++) {
+            ItemStack stack = from.getStack(i);
+            if (!stack.isEmpty()) {
+                ItemStack singleItem = stack.split(1); // Remove one item from the current stack
+                if (filterBlockEntity.isItemNotAllowed(singleItem)) {
+                    ItemStack remaining = addToInventory(to, singleItem);
+
+                    if (remaining.isEmpty()) {
+                        from.setStack(i, stack);
+                        return true; // Item was successfully transferred
+                    } else {
+                        stack.increment(1); // Revert the split if the item was not transferred
+                        from.setStack(i, stack);
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Default method of transferring items between two inventories
+     *
+     * @param from
+     * @param to
+     * @return
+     */
     private static boolean transferItem(Inventory from, Inventory to) {
         for (int i = 0; i < from.size(); i++) {
             ItemStack stack = from.getStack(i);
@@ -122,6 +174,34 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                     stack.increment(1); // Revert the split if the item was not transferred
                     from.setStack(i, stack);
                 }
+            }
+        }
+        return false;
+    }
+
+    public static boolean transferCommonItem(Inventory from, Inventory to) {
+        for (int i = 0; i < from.size(); i++) {
+            ItemStack stack = from.getStack(i);
+            if (!stack.isEmpty() && containsItem(to, stack)) {
+                ItemStack singleItem = stack.split(1); // Remove one item from the current stack
+                ItemStack remaining = addToInventory(to, singleItem);
+
+                if (remaining.isEmpty()) {
+                    from.setStack(i, stack);
+                    return true; // Item was successfully transferred
+                } else {
+                    stack.increment(1); // Revert the split if the item was not transferred
+                    from.setStack(i, stack);
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsItem(Inventory inventory, ItemStack item) {
+        for (int i = 0; i < inventory.size(); i++) {
+            if (ItemStack.canCombine(inventory.getStack(i), item)) {
+                return true;
             }
         }
         return false;
