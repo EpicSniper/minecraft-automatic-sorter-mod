@@ -110,16 +110,13 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
         this.filterType = filterType;
     }
 
-    public boolean isItemAllowed(ItemStack singleItem) {
-        return switch (FilterTypeEnum.fromValue(filterType)) {
-            case BLACKLIST -> !inventory.contains(singleItem);
-            case WHITELIST -> inventory.contains(singleItem);
-            case IN_INVENTORY -> true;
-        };
-    }
-
-    public boolean isItemNotAllowed(ItemStack singleItem) {
-        return !isItemAllowed(singleItem);
+    public boolean isItemInInventory(ItemStack singleItem) {
+        for (ItemStack stack : inventory) {
+            if (!stack.isEmpty() && ItemStack.canCombine(stack, singleItem)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public enum FilterTypeEnum {

@@ -1,5 +1,6 @@
 package cz.lukesmith.automaticsortermod.block.entity;
 
+import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import cz.lukesmith.automaticsortermod.block.custom.FilterBlock;
 import cz.lukesmith.automaticsortermod.block.custom.PipeBlock;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -114,7 +115,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
             ItemStack stack = from.getStack(i);
             if (!stack.isEmpty()) {
                 ItemStack singleItem = stack.split(1); // Remove one item from the current stack
-                if (filterBlockEntity.isItemAllowed(singleItem)) {
+                if (filterBlockEntity.isItemInInventory(singleItem)) {
                     ItemStack remaining = addToInventory(to, singleItem);
 
                     if (remaining.isEmpty()) {
@@ -134,36 +135,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
     private static boolean transferNotBlacklistedItem(Inventory from, Inventory to, FilterBlockEntity filterBlockEntity) {
         for (int i = 0; i < from.size(); i++) {
             ItemStack stack = from.getStack(i);
-            if (!stack.isEmpty()) {
-                ItemStack singleItem = stack.split(1); // Remove one item from the current stack
-                if (filterBlockEntity.isItemNotAllowed(singleItem)) {
-                    ItemStack remaining = addToInventory(to, singleItem);
-
-                    if (remaining.isEmpty()) {
-                        from.setStack(i, stack);
-                        return true; // Item was successfully transferred
-                    } else {
-                        stack.increment(1); // Revert the split if the item was not transferred
-                        from.setStack(i, stack);
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Default method of transferring items between two inventories
-     *
-     * @param from
-     * @param to
-     * @return
-     */
-    private static boolean transferItem(Inventory from, Inventory to) {
-        for (int i = 0; i < from.size(); i++) {
-            ItemStack stack = from.getStack(i);
-            if (!stack.isEmpty()) {
+            if (!stack.isEmpty() && !filterBlockEntity.isItemInInventory(stack)) {
                 ItemStack singleItem = stack.split(1); // Remove one item from the current stack
                 ItemStack remaining = addToInventory(to, singleItem);
 
@@ -176,7 +148,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                 }
             }
         }
-        return false;
+        return false; // Item was not transferred
     }
 
     public static boolean transferCommonItem(Inventory from, Inventory to) {
