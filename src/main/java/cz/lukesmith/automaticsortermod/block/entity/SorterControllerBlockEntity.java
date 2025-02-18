@@ -4,12 +4,18 @@ import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import cz.lukesmith.automaticsortermod.block.custom.FilterBlock;
 import cz.lukesmith.automaticsortermod.block.custom.PipeBlock;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.block.BarrelBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ChestBlock;
+import net.minecraft.block.entity.BarrelBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
@@ -65,8 +71,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         }
 
         if (ticker > 0) {
-            ticker--;
-            return;
+
         }
 
         Set<BlockPos> connectedPipes = findConnectedPipes(world, pos);
@@ -79,21 +84,18 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
             for (BlockPos filterPos : connectedFilters) {
                 Direction filterDirection = world.getBlockState(filterPos).get(FilterBlock.FACING);
                 BlockPos chestPos = filterPos.offset(filterDirection);
-                BlockEntity chestEntityPost = world.getBlockEntity(chestPos);
-                if (chestEntityPost instanceof ChestBlockEntity chestEntity) {
+                Inventory inventory = getInventoryFromPosition(world, chestPos);
+                if (inventory != null) {
                     BlockEntity filterEntity = world.getBlockEntity(filterPos);
                     if (filterEntity instanceof FilterBlockEntity filterBlockEntity) {
                         int filterType = filterBlockEntity.getFilterType();
-                        boolean itemTransfered = false;
+                        boolean itemTransfered;
                         switch (FilterBlockEntity.FilterTypeEnum.fromValue(filterType)) {
-                            case BLACKLIST:
-                                itemTransfered = transferNotBlacklistedItem(rootChestInventory, chestEntity, filterBlockEntity);
-                                break;
                             case WHITELIST:
-                                itemTransfered = transferWhitelistItem(rootChestInventory, chestEntity, filterBlockEntity);
+                                itemTransfered = transferWhitelistItem(rootChestInventory, inventory, filterBlockEntity);
                                 break;
                             case IN_INVENTORY:
-                                itemTransfered = transferCommonItem(rootChestInventory, chestEntity);
+                                itemTransfered = transferCommonItem(rootChestInventory, inventory);
                                 break;
                             default:
                                 throw new IllegalStateException("Unexpected value: " + FilterBlockEntity.FilterTypeEnum.fromValue(filterType));
@@ -110,13 +112,26 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         ticker = MAX_TICKER;
     }
 
+    @Nullable
+    private static Inventory getInventoryFromPosition(World world, BlockPos pos) {
+        Block block = world.getBlockState(pos).getBlock();
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (block instanceof ChestBlock chestBlock) {
+            return ChestBlock.getInventory(chestBlock, world.getBlockState(pos), world, pos, true);
+        } else if (blockEntity instanceof BarrelBlockEntity barrelBlockEntity) {
+            return (Inventory) barrelBlockEntity;
+        }
+
+        return null;
+    }
+
     private static boolean transferWhitelistItem(Inventory from, Inventory to, FilterBlockEntity filterBlockEntity) {
         for (int i = 0; i < from.size(); i++) {
             ItemStack stack = from.getStack(i);
             if (!stack.isEmpty()) {
                 ItemStack singleItem = stack.split(1); // Remove one item from the current stack
                 if (filterBlockEntity.isItemInInventory(singleItem)) {
-                    ItemStack remaining = addToInventory(to, singleItem);
+                    ItemStack remaining = transferItem(to, singleItem);
 
                     if (remaining.isEmpty()) {
                         from.setStack(i, stack);
@@ -125,6 +140,9 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                         stack.increment(1); // Revert the split if the item was not transferred
                         from.setStack(i, stack);
                     }
+                } else {
+                    stack.increment(1); // Revert the split if the item is not in the whitelist
+                    from.setStack(i, stack);
                 }
             }
         }
@@ -132,31 +150,12 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         return false;
     }
 
-    private static boolean transferNotBlacklistedItem(Inventory from, Inventory to, FilterBlockEntity filterBlockEntity) {
-        for (int i = 0; i < from.size(); i++) {
-            ItemStack stack = from.getStack(i);
-            if (!stack.isEmpty() && !filterBlockEntity.isItemInInventory(stack)) {
-                ItemStack singleItem = stack.split(1); // Remove one item from the current stack
-                ItemStack remaining = addToInventory(to, singleItem);
-
-                if (remaining.isEmpty()) {
-                    from.setStack(i, stack);
-                    return true; // Item was successfully transferred
-                } else {
-                    stack.increment(1); // Revert the split if the item was not transferred
-                    from.setStack(i, stack);
-                }
-            }
-        }
-        return false; // Item was not transferred
-    }
-
     public static boolean transferCommonItem(Inventory from, Inventory to) {
         for (int i = 0; i < from.size(); i++) {
             ItemStack stack = from.getStack(i);
             if (!stack.isEmpty() && containsItem(to, stack)) {
                 ItemStack singleItem = stack.split(1); // Remove one item from the current stack
-                ItemStack remaining = addToInventory(to, singleItem);
+                ItemStack remaining = transferItem(to, singleItem);
 
                 if (remaining.isEmpty()) {
                     from.setStack(i, stack);
@@ -176,26 +175,31 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                 return true;
             }
         }
+
         return false;
     }
 
-    private static ItemStack addToInventory(Inventory inventory, ItemStack stack) {
-        for (int i = 0; i < inventory.size(); i++) {
-            ItemStack slotStack = inventory.getStack(i);
-            if (slotStack.isEmpty()) {
-                inventory.setStack(i, stack);
+    private static ItemStack transferItem(Inventory to, ItemStack item) {
+        to.size();
+        for (int i = 0; i < to.size(); i++) {
+            ItemStack stackInSlot = to.getStack(i);
+            if (stackInSlot.isEmpty()) {
+                to.setStack(i, item);
                 return ItemStack.EMPTY;
-            } else if (ItemStack.canCombine(slotStack, stack)) {
-                int maxInsert = Math.min(stack.getCount(), slotStack.getMaxCount() - slotStack.getCount());
-                slotStack.increment(maxInsert);
-                stack.decrement(maxInsert);
-                if (stack.isEmpty()) {
+            } else if (ItemStack.canCombine(stackInSlot, item)) {
+                int transferAmount = Math.min(item.getCount(), stackInSlot.getMaxCount() - stackInSlot.getCount());
+                stackInSlot.increment(transferAmount);
+                item.decrement(transferAmount);
+                if (item.isEmpty()) {
                     return ItemStack.EMPTY;
                 }
             }
         }
-        return stack;
+
+        return item;
     }
+
+
 
     private static Set<BlockPos> findConnectedPipes(World world, BlockPos startPos) {
         Set<BlockPos> visited = new HashSet<>();

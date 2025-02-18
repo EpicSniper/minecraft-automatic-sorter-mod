@@ -25,7 +25,7 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(9, ItemStack.EMPTY);
 
-    private int filterType = FilterTypeEnum.BLACKLIST.getValue();
+    private int filterType = FilterTypeEnum.IN_INVENTORY.getValue();
 
     public FilterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.FILTER_BLOCK_ENTITY, pos, state);
@@ -120,9 +120,8 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
     }
 
     public enum FilterTypeEnum {
-        BLACKLIST(0),
-        WHITELIST(1),
-        IN_INVENTORY(2);
+        WHITELIST(0),
+        IN_INVENTORY(1);
 
         private final int value;
 
@@ -149,7 +148,6 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
 
         public static String getName(FilterTypeEnum type) {
             return switch (type) {
-                case BLACKLIST -> "Blacklist";
                 case WHITELIST -> "Whitelist";
                 case IN_INVENTORY -> "In Inventory";
             };
