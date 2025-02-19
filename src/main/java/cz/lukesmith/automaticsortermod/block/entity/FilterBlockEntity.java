@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
 
-    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(9, ItemStack.EMPTY);
+    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(24, ItemStack.EMPTY);
 
     private int filterType = FilterTypeEnum.IN_INVENTORY.getValue();
 

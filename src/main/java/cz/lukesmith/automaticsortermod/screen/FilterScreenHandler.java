@@ -26,23 +26,18 @@ public class FilterScreenHandler extends ScreenHandler {
     public FilterScreenHandler(int syncId, PlayerInventory playerInventory,
                                BlockEntity blockEntity, PropertyDelegate propertyDelegate) {
         super(ModScreenHandlers.FILTER_SCREEN_HANDLER, syncId);
-        checkSize(((Inventory) blockEntity), 9);
+        checkSize(((Inventory) blockEntity), 24);
         this.inventory = ((Inventory) blockEntity);
         inventory.onOpen(playerInventory.player);
         this.blockEntity = ((FilterBlockEntity) blockEntity);
         this.propertyDelegate = propertyDelegate;
 
         // Pridat sloty
-        this.addSlot(new Slot(inventory, 0, 62, 15));
-        this.addSlot(new Slot(inventory, 1, 80, 15));
-        this.addSlot(new Slot(inventory, 2, 98, 15));
-        this.addSlot(new Slot(inventory, 3, 62, 33));
-        this.addSlot(new Slot(inventory, 4, 80, 33));
-        this.addSlot(new Slot(inventory, 5, 98, 33));
-        this.addSlot(new Slot(inventory, 6, 62, 51));
-        this.addSlot(new Slot(inventory, 7, 80, 51));
-        this.addSlot(new Slot(inventory, 8, 98, 51));
-
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 8; j++) {
+                this.addSlot(new Slot(this.inventory, j + i * 8, 26 + j * 18, 15 + i * 18));
+            }
+        }
 
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);

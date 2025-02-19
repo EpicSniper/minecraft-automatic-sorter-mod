@@ -5,6 +5,8 @@ import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import cz.lukesmith.automaticsortermod.block.entity.FilterBlockEntity;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -29,11 +31,10 @@ public class FilterScreen extends HandledScreen<FilterScreenHandler> {
         titleY = 1000;
         playerInventoryTitleY = 1000;
 
-        receiveItemsButton = ButtonWidget.builder(getButtonText(), button -> {
+        receiveItemsButton = ButtonWidget.builder(Text.of(""), button -> {
             int value = handler.toggleFilterType();
             sendFilterTypeUpdate(value);
-            receiveItemsButton.setMessage(getButtonText());
-        }).dimensions(this.x + 10, this.y + 10, 100, 20).build();
+        }).dimensions(this.x + 6, this.y + 16, 17, 17).build();
 
         this.addDrawableChild(receiveItemsButton);
     }
@@ -61,10 +62,14 @@ public class FilterScreen extends HandledScreen<FilterScreenHandler> {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        receiveItemsButton.setMessage(getButtonText());
         renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+
+        if (receiveItemsButton.isMouseOver(mouseX, mouseY)) {
+            TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+            context.drawTooltip(textRenderer, getButtonText(), mouseX, mouseY);
+        }
 
         if (!receiveItemsButton.isMouseOver(mouseX, mouseY)) {
             receiveItemsButton.setFocused(false);
