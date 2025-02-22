@@ -71,7 +71,8 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         }
 
         if (ticker > 0) {
-
+            ticker--;
+            return;
         }
 
         Set<BlockPos> connectedPipes = findConnectedPipes(world, pos);
