@@ -12,10 +12,8 @@ import net.minecraft.util.Identifier;
 
 public class ModItems {
 
-    public static final Item TEST_ITEM = registerItem("test_item", new Item(new FabricItemSettings()));
-
     private static void addItemsToIngredientItemGroup(FabricItemGroupEntries entries) {
-        entries.add(TEST_ITEM);
+
     }
 
     private static Item registerItem(String name, Item item) {

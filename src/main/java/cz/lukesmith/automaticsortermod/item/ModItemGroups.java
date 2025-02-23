@@ -15,9 +15,7 @@ public class ModItemGroups {
     public static final ItemGroup AUTOMATIC_SORTER_GROUP = Registry.register(Registries.ITEM_GROUP,
             new Identifier(AutomaticSorterMod.MOD_ID, "automatic_sorter_group"),
             FabricItemGroup.builder().displayName(Text.translatable("itemGroup.automatic_sorter_group"))
-                    .icon(() -> new ItemStack(ModItems.TEST_ITEM)).entries((displayContext, entries) -> {
-                        entries.add(ModItems.TEST_ITEM);
-
+                    .icon(() -> new ItemStack(ModBlocks.PIPE_BLOCK)).entries((displayContext, entries) -> {
                         entries.add(ModBlocks.PIPE_BLOCK);
                         entries.add(ModBlocks.SORTER_CONTROLLER_BLOCK);
                         entries.add(ModBlocks.FILTER_BLOCK);
