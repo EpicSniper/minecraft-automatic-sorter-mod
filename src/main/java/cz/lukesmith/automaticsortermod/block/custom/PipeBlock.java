@@ -11,6 +11,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
 
@@ -43,7 +44,33 @@ public class PipeBlock extends Block {
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
+        VoxelShape shape = createCuboidShape(6, 6, 6, 10, 10, 10);
+
+        if (state.get(NORTH)) {
+            shape = VoxelShapes.union(shape, createCuboidShape(6, 6, 0, 10, 10, 6));
+        }
+
+        if (state.get(SOUTH)) {
+            shape = VoxelShapes.union(shape, createCuboidShape(6, 6, 10, 10, 10, 16));
+        }
+
+        if (state.get(EAST)) {
+            shape = VoxelShapes.union(shape, createCuboidShape(10, 6, 6, 16, 10, 10));
+        }
+
+        if (state.get(WEST)) {
+            shape = VoxelShapes.union(shape, createCuboidShape(0, 6, 6, 6, 10, 10));
+        }
+
+        if (state.get(UP)) {
+            shape = VoxelShapes.union(shape, createCuboidShape(6, 10, 6, 10, 16, 10));
+        }
+
+        if (state.get(DOWN)) {
+            shape = VoxelShapes.union(shape, createCuboidShape(6, 0, 6, 10, 6, 10));
+        }
+
+        return shape;
     }
 
     @Override
