@@ -1,10 +1,11 @@
 package cz.lukesmith.automaticsortermod.block.custom;
 
-import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
@@ -13,7 +14,9 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import org.jetbrains.annotations.Nullable;
 
 public class PipeBlock extends Block {
 
@@ -23,8 +26,6 @@ public class PipeBlock extends Block {
     public static final BooleanProperty EAST = Properties.EAST;
     public static final BooleanProperty UP = Properties.UP;
     public static final BooleanProperty DOWN = Properties.DOWN;
-
-    private static final VoxelShape SHAPE = createCuboidShape(0, 0, 0, 16, 16, 16);
 
     public PipeBlock(Settings settings) {
         super(settings);
@@ -80,30 +81,40 @@ public class PipeBlock extends Block {
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        boolean isConnected = false;
-        if (direction == Direction.UP && neighborState.getBlock() instanceof SorterControllerBlock) {
-            isConnected = true;
-        } else if (neighborState.getBlock() instanceof FilterBlock) {
-            Direction filterFacing = neighborState.get(FilterBlock.FACING);
-            if (direction == filterFacing) {
-                isConnected = true;
-            }
-        } else if (neighborState.getBlock() instanceof PipeBlock) {
-            isConnected = true;
-        }
-
+        boolean isConnected = isConnectedToNeighbor(neighborState, direction);
         return state.with(getPropertyForDirection(direction), isConnected);
     }
 
-    private BooleanProperty getPropertyForDirection(Direction direction) {
-        switch (direction) {
-            case NORTH: return NORTH;
-            case EAST: return EAST;
-            case SOUTH: return SOUTH;
-            case WEST: return WEST;
-            case UP: return UP;
-            case DOWN: return DOWN;
-            default: throw new IllegalArgumentException("Unexpected direction: " + direction);
+    private boolean isConnectedToNeighbor(BlockState neighborState, Direction direction) {
+        if (direction == Direction.UP && neighborState.getBlock() instanceof SorterControllerBlock) {
+            return true;
+        } else if (neighborState.getBlock() instanceof FilterBlock) {
+            Direction filterFacing = neighborState.get(FilterBlock.FACING);
+            return direction == filterFacing;
+        } else return neighborState.getBlock() instanceof PipeBlock;
+    }
+
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+
+        for (Direction direction : Direction.values()) {
+            BlockPos neighborPos = pos.offset(direction);
+            BlockState neighborState = world.getBlockState(neighborPos);
+            state = state.with(getPropertyForDirection(direction), isConnectedToNeighbor(neighborState, direction));
         }
+
+        world.setBlockState(pos, state, 3);
+    }
+
+    private BooleanProperty getPropertyForDirection(Direction direction) {
+        return switch (direction) {
+            case NORTH -> NORTH;
+            case EAST -> EAST;
+            case SOUTH -> SOUTH;
+            case WEST -> WEST;
+            case UP -> UP;
+            case DOWN -> DOWN;
+        };
     }
 }
