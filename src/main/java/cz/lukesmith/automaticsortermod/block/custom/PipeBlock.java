@@ -80,9 +80,18 @@ public class PipeBlock extends Block {
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        boolean isConnected = neighborState.getBlock() instanceof PipeBlock ||
-                neighborState.getBlock() instanceof FilterBlock ||
-                neighborState.getBlock() instanceof SorterControllerBlock;
+        boolean isConnected = false;
+        if (direction == Direction.UP && neighborState.getBlock() instanceof SorterControllerBlock) {
+            isConnected = true;
+        } else if (neighborState.getBlock() instanceof FilterBlock) {
+            Direction filterFacing = neighborState.get(FilterBlock.FACING);
+            if (direction == filterFacing) {
+                isConnected = true;
+            }
+        } else if (neighborState.getBlock() instanceof PipeBlock) {
+            isConnected = true;
+        }
+
         return state.with(getPropertyForDirection(direction), isConnected);
     }
 

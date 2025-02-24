@@ -3,7 +3,7 @@
 	"texture_size": [64, 64],
 	"textures": {
 		"1": "automaticsortermod:block/filter",
-		"particle": "texture-filter"
+		"particle": "automaticsortermod:block/filter"
 	},
 	"elements": [
 		{
