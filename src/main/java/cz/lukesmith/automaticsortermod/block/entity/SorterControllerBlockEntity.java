@@ -204,8 +204,16 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
 
     private static Set<BlockPos> findConnectedPipes(World world, BlockPos startPos) {
         Set<BlockPos> visited = new HashSet<>();
+        BlockPos belowPos = startPos.down();
+
+        if (!(world.getBlockState(belowPos).getBlock() instanceof PipeBlock)) {
+            AutomaticSorterMod.LOGGER.info("Erly: " + world.getBlockState(belowPos).getBlock());
+            AutomaticSorterMod.LOGGER.info("Pos Erly: " + belowPos);
+            return visited;
+        }
+
         Queue<BlockPos> queue = new LinkedList<>();
-        queue.add(startPos);
+        queue.add(belowPos);
 
         while (!queue.isEmpty()) {
             BlockPos currentPos = queue.poll();
@@ -221,7 +229,6 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
             }
         }
 
-        visited.remove(startPos); // Remove the starting position (SorterControllerBlock)
         return visited;
     }
 
@@ -231,11 +238,17 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         for (BlockPos pipePos : pipePositions) {
             for (Direction direction : Direction.values()) {
                 BlockPos neighborPos = pipePos.offset(direction);
-                if (world.getBlockState(neighborPos).getBlock() instanceof FilterBlock) {
-                    filterPositions.add(neighborPos);
+                BlockState neighborState = world.getBlockState(neighborPos);
+                if (neighborState.getBlock() instanceof FilterBlock) {
+                    Direction filterFacing = neighborState.get(FilterBlock.FACING);
+                    if (direction == filterFacing) {
+                        filterPositions.add(neighborPos);
+                    }
                 }
             }
         }
+
+        AutomaticSorterMod.LOGGER.info("Connected filters: " + filterPositions);
 
         return filterPositions;
     }
