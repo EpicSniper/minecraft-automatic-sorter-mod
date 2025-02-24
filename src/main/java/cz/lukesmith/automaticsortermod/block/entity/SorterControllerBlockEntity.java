@@ -1,21 +1,16 @@
 package cz.lukesmith.automaticsortermod.block.entity;
 
-import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
 import cz.lukesmith.automaticsortermod.block.custom.FilterBlock;
 import cz.lukesmith.automaticsortermod.block.custom.PipeBlock;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.BarrelBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.BarrelBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
@@ -120,7 +115,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         if (block instanceof ChestBlock chestBlock) {
             return ChestBlock.getInventory(chestBlock, world.getBlockState(pos), world, pos, true);
         } else if (blockEntity instanceof BarrelBlockEntity barrelBlockEntity) {
-            return (Inventory) barrelBlockEntity;
+            return barrelBlockEntity;
         }
 
         return null;
@@ -205,8 +200,6 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         BlockPos belowPos = startPos.down();
 
         if (!(world.getBlockState(belowPos).getBlock() instanceof PipeBlock)) {
-            AutomaticSorterMod.LOGGER.info("Erly: " + world.getBlockState(belowPos).getBlock());
-            AutomaticSorterMod.LOGGER.info("Pos Erly: " + belowPos);
             return visited;
         }
 
@@ -245,8 +238,6 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                 }
             }
         }
-
-        AutomaticSorterMod.LOGGER.info("Connected filters: " + filterPositions);
 
         return filterPositions;
     }
