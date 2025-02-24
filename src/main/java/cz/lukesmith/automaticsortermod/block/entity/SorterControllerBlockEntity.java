@@ -34,7 +34,7 @@ import java.util.Set;
 
 public class SorterControllerBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
 
-    private static int ticker = 0;
+    private int ticker = 0;
     private static final int MAX_TICKER = 5;
 
     public SorterControllerBlockEntity(BlockPos pos, BlockState state) {
@@ -199,8 +199,6 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
 
         return item;
     }
-
-
 
     private static Set<BlockPos> findConnectedPipes(World world, BlockPos startPos) {
         Set<BlockPos> visited = new HashSet<>();
