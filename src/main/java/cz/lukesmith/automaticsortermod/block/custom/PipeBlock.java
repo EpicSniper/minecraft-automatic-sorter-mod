@@ -46,28 +46,28 @@ public class PipeBlock extends Block {
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         VoxelShape shape = createCuboidShape(6, 6, 6, 10, 10, 10);
 
-        if (state.get(NORTH)) {
-            shape = VoxelShapes.union(shape, createCuboidShape(6, 6, 0, 10, 10, 6));
-        }
+        int[][] directions = {
+                {6, 6, 0, 10, 10, 6},
+                {6, 6, 10, 10, 10, 16},
+                {10, 6, 6, 16, 10, 10},
+                {0, 6, 6, 6, 10, 10},
+                {6, 10, 6, 10, 16, 10},
+                {6, 0, 6, 10, 6, 10}
+        };
 
-        if (state.get(SOUTH)) {
-            shape = VoxelShapes.union(shape, createCuboidShape(6, 6, 10, 10, 10, 16));
-        }
+        boolean[] directionsActive = {
+                state.get(NORTH),
+                state.get(SOUTH),
+                state.get(EAST),
+                state.get(WEST),
+                state.get(UP),
+                state.get(DOWN)
+        };
 
-        if (state.get(EAST)) {
-            shape = VoxelShapes.union(shape, createCuboidShape(10, 6, 6, 16, 10, 10));
-        }
-
-        if (state.get(WEST)) {
-            shape = VoxelShapes.union(shape, createCuboidShape(0, 6, 6, 6, 10, 10));
-        }
-
-        if (state.get(UP)) {
-            shape = VoxelShapes.union(shape, createCuboidShape(6, 10, 6, 10, 16, 10));
-        }
-
-        if (state.get(DOWN)) {
-            shape = VoxelShapes.union(shape, createCuboidShape(6, 0, 6, 10, 6, 10));
+        for (int i = 0; i < directions.length; i++) {
+            if (directionsActive[i]) {
+                shape = VoxelShapes.union(shape, createCuboidShape(directions[i][0], directions[i][1], directions[i][2], directions[i][3], directions[i][4], directions[i][5]));
+            }
         }
 
         return shape;
