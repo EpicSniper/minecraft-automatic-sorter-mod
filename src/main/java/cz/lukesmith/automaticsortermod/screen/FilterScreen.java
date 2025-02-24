@@ -34,7 +34,7 @@ public class FilterScreen extends HandledScreen<FilterScreenHandler> {
         receiveItemsButton = ButtonWidget.builder(Text.of(""), button -> {
             int value = handler.toggleFilterType();
             sendFilterTypeUpdate(value);
-        }).dimensions(this.x + 6, this.y + 16, 17, 17).build();
+        }).dimensions(this.x + 6, this.y + 14, 17, 17).build();
 
         this.addDrawableChild(receiveItemsButton);
     }
