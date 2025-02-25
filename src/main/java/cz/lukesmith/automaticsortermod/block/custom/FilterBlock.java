@@ -20,13 +20,12 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class FilterBlock extends BlockWithEntity implements BlockEntityProvider {
-
-    private static final VoxelShape SHAPE = createCuboidShape(0, 0, 0, 16, 16, 16);
 
     public static final DirectionProperty FACING = Properties.FACING;
 
@@ -42,7 +41,31 @@ public class FilterBlock extends BlockWithEntity implements BlockEntityProvider 
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
+        // -- Následuje příklad, jak vytvořit hitbox pro blok --
+        // Vytvoří se tvar hitboxu bloku
+        VoxelShape shape = createCuboidShape(0, 0, 0, 8, 8, 8);
+
+        // Přidá se část hitboxu do bloku
+        shape = VoxelShapes.union(shape, createCuboidShape(2, 2, 2, 10, 10, 10));
+
+        // Zde se pak mohou přidávat další části hitboxu
+        shape = VoxelShapes.union(shape, createCuboidShape(10, 10, 2, 11, 12, 16));
+
+        // -- Konec příkladu --
+        // Můžeš přidávat kolik částí chceš
+        // V Minecraftu jsou souřadnice X Y a Z - zapneš je F3
+        // funkce createCuboidShape má 6 parametrů - minX, minY, minZ, maxX, maxY, maxZ
+        // dohromady tvoří krychli
+        // createCuboidShape(0, 0, 0, 8, 8, 8) - vytvoří krychli od 0,0,0 do 8,8,8
+        // createCuboidShape(2, 2, 2, 10, 10, 10) - vytvoří krychli od 2,2,2 do 10,10,10
+        // minimální hodnota je 0 a maximální 16
+        // musíš mít nejprve vytvořený tvar a potom k němu přidávat další části (viz. kód výše)
+
+        // Požaduji alespoň dvě části hitboxu - jednu částo pro iron část bloku a druhou pro pipe část bloku
+        // Kdyžtak vyzkoušej, jak se po tom bude chodit, ve světě jsou už položené bloky na zkoušku
+
+        // Na konci funkce musíš vrátit tvar hitboxu (kód níže)
+        return shape;
     }
 
     @Override
