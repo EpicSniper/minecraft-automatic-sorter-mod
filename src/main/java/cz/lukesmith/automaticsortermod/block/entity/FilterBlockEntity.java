@@ -21,7 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, AbstractInventory {
+public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(24, ItemStack.EMPTY);
 
@@ -90,7 +90,7 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
 
     public void tick(World world, BlockPos pos, BlockState state) {
         if (world.isClient) {
-            return; // Tick metoda se neprovádí na klientské straně
+            // Tick metoda se neprovádí na klientské straně
         }
     }
 
@@ -156,5 +156,10 @@ public class FilterBlockEntity extends BlockEntity implements ExtendedScreenHand
         public static String getName(int value) {
             return getName(fromValue(value));
         }
+    }
+
+    @Override
+    public int getMaxCountPerStack() {
+        return 1;
     }
 }
