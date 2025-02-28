@@ -1,0 +1,7 @@
+{
+  "itemGroup.automatic_sorter_group": "Automatic Sorter Group",
+  "block.automaticsorter.pipe": "Pipe",
+  "block.automaticsorter.filter": "Filter",
+  "block.automaticsorter.sorter_controller": "Sorter Controller",
+  "automaticsorter.filter_block_entity": "Filter"
+}

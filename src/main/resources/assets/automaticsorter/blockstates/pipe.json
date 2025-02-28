@@ -1,0 +1,196 @@
+{
+  "variants": {
+    "north=false,south=false,west=false,east=false,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-0"
+    },
+    "north=true,south=false,west=false,east=false,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-1"
+    },
+    "north=false,south=true,west=false,east=false,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-2"
+    },
+    "north=true,south=true,west=false,east=false,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-3"
+    },
+    "north=false,south=false,west=true,east=false,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-4"
+    },
+    "north=true,south=false,west=true,east=false,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-5"
+    },
+    "north=false,south=true,west=true,east=false,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-6"
+    },
+    "north=true,south=true,west=true,east=false,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-7"
+    },
+    "north=false,south=false,west=false,east=true,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-8"
+    },
+    "north=true,south=false,west=false,east=true,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-9"
+    },
+    "north=false,south=true,west=false,east=true,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-10"
+    },
+    "north=true,south=true,west=false,east=true,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-11"
+    },
+    "north=false,south=false,west=true,east=true,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-12"
+    },
+    "north=true,south=false,west=true,east=true,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-13"
+    },
+    "north=false,south=true,west=true,east=true,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-14"
+    },
+    "north=true,south=true,west=true,east=true,up=false,down=false": {
+      "model": "automaticsorter:block/pipe-15"
+    },
+    "north=false,south=false,west=false,east=false,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-16"
+    },
+    "north=true,south=false,west=false,east=false,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-17"
+    },
+    "north=false,south=true,west=false,east=false,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-18"
+    },
+    "north=true,south=true,west=false,east=false,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-19"
+    },
+    "north=false,south=false,west=true,east=false,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-20"
+    },
+    "north=true,south=false,west=true,east=false,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-21"
+    },
+    "north=false,south=true,west=true,east=false,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-22"
+    },
+    "north=true,south=true,west=true,east=false,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-23"
+    },
+    "north=false,south=false,west=false,east=true,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-24"
+    },
+    "north=true,south=false,west=false,east=true,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-25"
+    },
+    "north=false,south=true,west=false,east=true,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-26"
+    },
+    "north=true,south=true,west=false,east=true,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-27"
+    },
+    "north=false,south=false,west=true,east=true,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-28"
+    },
+    "north=true,south=false,west=true,east=true,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-29"
+    },
+    "north=false,south=true,west=true,east=true,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-30"
+    },
+    "north=true,south=true,west=true,east=true,up=true,down=false": {
+      "model": "automaticsorter:block/pipe-31"
+    },
+    "north=false,south=false,west=false,east=false,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-32"
+    },
+    "north=true,south=false,west=false,east=false,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-33"
+    },
+    "north=false,south=true,west=false,east=false,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-34"
+    },
+    "north=true,south=true,west=false,east=false,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-35"
+    },
+    "north=false,south=false,west=true,east=false,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-36"
+    },
+    "north=true,south=false,west=true,east=false,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-37"
+    },
+    "north=false,south=true,west=true,east=false,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-38"
+    },
+    "north=true,south=true,west=true,east=false,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-39"
+    },
+    "north=false,south=false,west=false,east=true,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-40"
+    },
+    "north=true,south=false,west=false,east=true,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-41"
+    },
+    "north=false,south=true,west=false,east=true,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-42"
+    },
+    "north=true,south=true,west=false,east=true,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-43"
+    },
+    "north=false,south=false,west=true,east=true,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-44"
+    },
+    "north=true,south=false,west=true,east=true,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-45"
+    },
+    "north=false,south=true,west=true,east=true,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-46"
+    },
+    "north=true,south=true,west=true,east=true,up=false,down=true": {
+      "model": "automaticsorter:block/pipe-47"
+    },
+    "north=false,south=false,west=false,east=false,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-48"
+    },
+    "north=true,south=false,west=false,east=false,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-49"
+    },
+    "north=false,south=true,west=false,east=false,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-50"
+    },
+    "north=true,south=true,west=false,east=false,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-51"
+    },
+    "north=false,south=false,west=true,east=false,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-52"
+    },
+    "north=true,south=false,west=true,east=false,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-53"
+    },
+    "north=false,south=true,west=true,east=false,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-54"
+    },
+    "north=true,south=true,west=true,east=false,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-55"
+    },
+    "north=false,south=false,west=false,east=true,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-56"
+    },
+    "north=true,south=false,west=false,east=true,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-57"
+    },
+    "north=false,south=true,west=false,east=true,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-58"
+    },
+    "north=true,south=true,west=false,east=true,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-59"
+    },
+    "north=false,south=false,west=true,east=true,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-60"
+    },
+    "north=true,south=false,west=true,east=true,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-61"
+    },
+    "north=false,south=true,west=true,east=true,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-62"
+    },
+    "north=true,south=true,west=true,east=true,up=true,down=true": {
+      "model": "automaticsorter:block/pipe-63"
+    }
+  }
+}

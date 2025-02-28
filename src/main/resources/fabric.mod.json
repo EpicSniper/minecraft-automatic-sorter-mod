@@ -12,17 +12,17 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "MIT",
-	"icon": "assets/automaticsortermod/icon.png",
+  "icon": "assets/automaticsorter/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"cz.lukesmith.automaticsortermod.AutomaticSorterMod"
+          "cz.lukesmith.automaticsorter.AutomaticSorter"
 		],
 		"client": [
-			"cz.lukesmith.automaticsortermod.AutomaticSorterModClient"
+          "cz.lukesmith.automaticsorter.AutomaticSorterClient"
 		],
 		"fabric-datagen": [
-			"cz.lukesmith.automaticsortermod.AutomaticSorterModDataGenerator"
+          "cz.lukesmith.automaticsorter.AutomaticSorterDataGenerator"
 		]
 	},
 	"mixins": [

@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "automaticsorter:block/filter",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "automaticsorter:block/filter",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "automaticsorter:block/filter",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "automaticsorter:block/filter",
+      "x": 90,
+      "y": 90
+    },
+    "facing=up": {
+      "model": "automaticsorter:block/filter"
+    },
+    "facing=down": {
+      "model": "automaticsorter:block/filter",
+      "x": 180
+    }
+  }
+}
