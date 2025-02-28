@@ -2,9 +2,11 @@ package cz.lukesmith.automaticsortermod.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import cz.lukesmith.automaticsortermod.AutomaticSorterMod;
+import cz.lukesmith.automaticsortermod.block.ModBlocks;
 import cz.lukesmith.automaticsortermod.block.entity.FilterBlockEntity;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -12,6 +14,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -20,6 +23,9 @@ public class FilterScreen extends HandledScreen<FilterScreenHandler> {
 
     private static final Identifier TEXTURE = new Identifier(AutomaticSorterMod.MOD_ID, "textures/gui/filter.png");
     private ButtonWidget receiveItemsButton;
+    private static final ItemStack CHEST_BLOCK = new ItemStack(Blocks.CHEST);
+    private static final ItemStack FILTER_BLOCK = new ItemStack(ModBlocks.FILTER_BLOCK);
+
 
     public FilterScreen(FilterScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -46,7 +52,7 @@ public class FilterScreen extends HandledScreen<FilterScreenHandler> {
     private void sendFilterTypeUpdate(int value) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeInt(value);
-        ClientPlayNetworking.send(new Identifier("automaticsortermod", "update_receive_items"), buf);
+        ClientPlayNetworking.send(new Identifier(AutomaticSorterMod.MOD_ID, "update_receive_items"), buf);
     }
 
     @Override
@@ -73,6 +79,24 @@ public class FilterScreen extends HandledScreen<FilterScreenHandler> {
 
         if (!receiveItemsButton.isMouseOver(mouseX, mouseY)) {
             receiveItemsButton.setFocused(false);
+        }
+
+        int filterType = handler.getFilterType();
+        ItemStack renderButtonBlock = filterType == FilterBlockEntity.FilterTypeEnum.WHITELIST.getValue() ? FILTER_BLOCK : CHEST_BLOCK;
+
+        switch (filterType) {
+            case 0:
+                context.drawItem(renderButtonBlock, this.x + 7, this.y + 15);
+                break;
+            case 1:
+                context.drawItem(renderButtonBlock, this.x + 7, this.y + 14);
+                int x = this.x + 25;
+                int y = this.y + 14;
+                int width = 8 * 18;
+                int height = 3 * 18;
+                int color = 0x80000000;
+                context.fill(x, y, x + width, y + height, color);
+                break;
         }
     }
 }
