@@ -74,9 +74,9 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         Set<BlockPos> connectedFilters = findConnectedFilters(world, connectedPipes);
 
         BlockPos rootChestPos = pos.up();
-        BlockEntity rootChestEntity = world.getBlockEntity(rootChestPos);
 
-        if (rootChestEntity instanceof Inventory rootChestInventory) {
+        Inventory rootChestInventory = getInventoryFromPosition(world, rootChestPos);
+        if (rootChestInventory != null) {
             for (BlockPos filterPos : connectedFilters) {
                 Direction filterDirection = world.getBlockState(filterPos).get(FilterBlock.FACING);
                 BlockPos chestPos = filterPos.offset(filterDirection);
