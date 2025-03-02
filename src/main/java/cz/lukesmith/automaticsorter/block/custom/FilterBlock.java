@@ -19,6 +19,7 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -31,7 +32,7 @@ public class FilterBlock extends BlockWithEntity implements BlockEntityProvider 
 
     public FilterBlock(Settings settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
+        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.UP));
     }
 
     @Override
@@ -41,31 +42,54 @@ public class FilterBlock extends BlockWithEntity implements BlockEntityProvider 
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        // -- Následuje příklad, jak vytvořit hitbox pro blok --
-        // Vytvoří se tvar hitboxu bloku
-        VoxelShape shape = createCuboidShape(0, 0, 0, 8, 8, 8);
+        Vec3d[][] shapes = getShapesForFacing(state.get(FACING));
 
-        // Přidá se část hitboxu do bloku
-        shape = VoxelShapes.union(shape, createCuboidShape(2, 2, 2, 10, 10, 10));
+        VoxelShape shape = VoxelShapes.empty();
+        for (Vec3d[] shapePart : shapes) {
+            shapePart[0] = shapePart[0].multiply(1 / 16.0);
+            shapePart[1] = shapePart[1].multiply(1 / 16.0);
+            shape = VoxelShapes.union(shape, VoxelShapes.cuboid(shapePart[0].getX(), shapePart[0].getY(), shapePart[0].getZ(), shapePart[1].getX(), shapePart[1].getY(), shapePart[1].getZ()));
+        }
 
-        // Zde se pak mohou přidávat další části hitboxu
-        shape = VoxelShapes.union(shape, createCuboidShape(10, 10, 2, 11, 12, 16));
-
-        // -- Konec příkladu --
-        // Můžeš přidávat kolik částí chceš
-        // V Minecraftu jsou souřadnice X Y a Z - zapneš je F3
-        // funkce createCuboidShape má 6 parametrů - minX, minY, minZ, maxX, maxY, maxZ
-        // dohromady tvoří krychli
-        // createCuboidShape(0, 0, 0, 8, 8, 8) - vytvoří krychli od 0,0,0 do 8,8,8
-        // createCuboidShape(2, 2, 2, 10, 10, 10) - vytvoří krychli od 2,2,2 do 10,10,10
-        // minimální hodnota je 0 a maximální 16
-        // musíš mít nejprve vytvořený tvar a potom k němu přidávat další části (viz. kód výše)
-
-        // Požaduji alespoň dvě části hitboxu - jednu částo pro iron část bloku a druhou pro pipe část bloku
-        // Kdyžtak vyzkoušej, jak se po tom bude chodit, ve světě jsou už položené bloky na zkoušku
-
-        // Na konci funkce musíš vrátit tvar hitboxu (kód níže)
         return shape;
+    }
+
+    private Vec3d[][] getShapesForFacing(Direction facing) {
+        Vec3d[][] shapes = new Vec3d[][]{
+                {new Vec3d(6, 0, 6), new Vec3d(10, 9, 10)},
+                {new Vec3d(3, 9, 3), new Vec3d(13, 13, 13)},
+                {new Vec3d(2, 13, 2), new Vec3d(14, 16, 14)}
+        };
+
+        switch (facing) {
+            case DOWN:
+                shapes[0] = new Vec3d[]{new Vec3d(6, 7, 6), new Vec3d(10, 16, 10)};
+                shapes[1] = new Vec3d[]{new Vec3d(3, 3, 3), new Vec3d(13, 7, 13)};
+                shapes[2] = new Vec3d[]{new Vec3d(2, 0, 2), new Vec3d(14, 3, 14)};
+                break;
+            case NORTH:
+                shapes[0] = new Vec3d[]{new Vec3d(6, 6, 7), new Vec3d(10, 10, 16)};
+                shapes[1] = new Vec3d[]{new Vec3d(3, 3, 3), new Vec3d(13, 13, 7)};
+                shapes[2] = new Vec3d[]{new Vec3d(2, 2, 0), new Vec3d(14, 14, 3)};
+                break;
+            case SOUTH:
+                shapes[0] = new Vec3d[]{new Vec3d(6, 6, 0), new Vec3d(10, 10, 9)};
+                shapes[1] = new Vec3d[]{new Vec3d(3, 3, 9), new Vec3d(13, 13, 13)};
+                shapes[2] = new Vec3d[]{new Vec3d(2, 2, 13), new Vec3d(14, 14, 16)};
+                break;
+            case WEST:
+                shapes[0] = new Vec3d[]{new Vec3d(7, 6, 6), new Vec3d(16, 10, 10)};
+                shapes[1] = new Vec3d[]{new Vec3d(3, 3, 3), new Vec3d(7, 13, 13)};
+                shapes[2] = new Vec3d[]{new Vec3d(0, 2, 2), new Vec3d(3, 14, 14)};
+                break;
+            case EAST:
+                shapes[0] = new Vec3d[]{new Vec3d(0, 6, 6), new Vec3d(9, 10, 10)};
+                shapes[1] = new Vec3d[]{new Vec3d(9, 3, 3), new Vec3d(13, 13, 13)};
+                shapes[2] = new Vec3d[]{new Vec3d(13, 2, 2), new Vec3d(16, 14, 14)};
+                break;
+        }
+
+        return shapes;
     }
 
     @Override
