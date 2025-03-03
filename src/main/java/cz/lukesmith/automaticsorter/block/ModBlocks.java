@@ -15,9 +15,15 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class ModBlocks {
-    public static final Block PIPE_BLOCK = registerBlock("pipe", new PipeBlock(FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).nonOpaque()));
-    public static final Block SORTER_CONTROLLER_BLOCK = registerBlock("sorter_controller", new SorterControllerBlock(FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).nonOpaque()));
-    public static final Block FILTER_BLOCK = registerBlock("filter", new FilterBlock(FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).nonOpaque()));
+    public static final Block PIPE_BLOCK = registerBlock("pipe", new PipeBlock(
+            FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).requiresTool().strength(1.0f, 2.0f).nonOpaque()
+    ));
+    public static final Block SORTER_CONTROLLER_BLOCK = registerBlock("sorter_controller", new SorterControllerBlock(
+            FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).requiresTool().strength(3.0f, 6.0f).nonOpaque()
+    ));
+    public static final Block FILTER_BLOCK = registerBlock("filter", new FilterBlock(
+            FabricBlockSettings.copyOf(Blocks.COPPER_BLOCK).requiresTool().strength(3.0f, 6.0f).nonOpaque()
+    ));
 
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);
