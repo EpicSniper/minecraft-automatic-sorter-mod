@@ -16,7 +16,7 @@ public class ModItems {
     }
 
     private static Item registerItem(String name, Item item) {
-        return Registry.register(Registries.ITEM, new Identifier(AutomaticSorter.MOD_ID, name), item);
+        return Registry.register(Registries.ITEM, Identifier.of(AutomaticSorter.MOD_ID, name), item);
     }
 
     public static void registerItems() {

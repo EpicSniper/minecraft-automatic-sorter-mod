@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 public class ModItemGroups {
 
     public static final ItemGroup AUTOMATIC_SORTER_GROUP = Registry.register(Registries.ITEM_GROUP,
-            new Identifier(AutomaticSorter.MOD_ID, "automatic_sorter_group"),
+            Identifier.of(AutomaticSorter.MOD_ID, "automatic_sorter_group"),
             FabricItemGroup.builder().displayName(Text.translatable("itemGroup.automatic_sorter_group"))
                     .icon(() -> new ItemStack(ModBlocks.PIPE_BLOCK)).entries((displayContext, entries) -> {
                         entries.add(ModBlocks.PIPE_BLOCK);

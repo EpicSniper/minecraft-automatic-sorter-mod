@@ -6,11 +6,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.math.BlockPos;
 
 public class FilterScreenHandler extends ScreenHandler {
 
@@ -19,8 +19,8 @@ public class FilterScreenHandler extends ScreenHandler {
     private final PropertyDelegate propertyDelegate;
 
 
-    public FilterScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
-        this(syncId, inventory, inventory.player.getWorld().getBlockEntity(buf.readBlockPos()), new ArrayPropertyDelegate(1));
+    public FilterScreenHandler(int syncId, PlayerInventory inventory, BlockPos pos) {
+        this(syncId, inventory, inventory.player.getWorld().getBlockEntity(pos), new ArrayPropertyDelegate(1));
     }
 
     public FilterScreenHandler(int syncId, PlayerInventory playerInventory,
@@ -76,6 +76,11 @@ public class FilterScreenHandler extends ScreenHandler {
     public int toggleFilterType() {
         int value = FilterBlockEntity.FilterTypeEnum.nextValue(this.getFilterType());
         propertyDelegate.set(0, value);
+        blockEntity.markDirty();
         return value;
+    }
+
+    public BlockPos getBlockPos() {
+        return blockEntity.getPos();
     }
 }

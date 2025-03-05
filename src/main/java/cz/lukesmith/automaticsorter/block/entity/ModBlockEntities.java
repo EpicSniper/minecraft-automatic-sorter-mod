@@ -9,11 +9,11 @@ import net.minecraft.util.Identifier;
 
 public class ModBlockEntities {
     public static final BlockEntityType<SorterControllerBlockEntity> SORTER_CONTROLLER_BLOCK_ENTITY =
-            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(AutomaticSorter.MOD_ID, "sorter_controller_be"),
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(AutomaticSorter.MOD_ID, "sorter_controller_be"),
                     BlockEntityType.Builder.create(SorterControllerBlockEntity::create, ModBlocks.SORTER_CONTROLLER_BLOCK).build(null));
 
     public static final BlockEntityType<FilterBlockEntity> FILTER_BLOCK_ENTITY =
-            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(AutomaticSorter.MOD_ID, "filter_be"),
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(AutomaticSorter.MOD_ID, "filter_be"),
                     BlockEntityType.Builder.create(FilterBlockEntity::create, ModBlocks.FILTER_BLOCK).build(null));
 
     public static void registerModBlocksEntities() {

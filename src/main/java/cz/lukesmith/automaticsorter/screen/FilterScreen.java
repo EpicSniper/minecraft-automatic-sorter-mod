@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import cz.lukesmith.automaticsorter.AutomaticSorter;
 import cz.lukesmith.automaticsorter.block.ModBlocks;
 import cz.lukesmith.automaticsorter.block.entity.FilterBlockEntity;
-import io.netty.buffer.Unpooled;
+import cz.lukesmith.automaticsorter.network.FilterTypePayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -15,13 +15,13 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 
 public class FilterScreen extends HandledScreen<FilterScreenHandler> {
 
-    private static final Identifier TEXTURE = new Identifier(AutomaticSorter.MOD_ID, "textures/gui/filter.png");
+    private static final Identifier TEXTURE = Identifier.of(AutomaticSorter.MOD_ID, "textures/gui/filter.png");
     private ButtonWidget receiveItemsButton;
     private static final ItemStack CHEST_BLOCK = new ItemStack(Blocks.CHEST);
     private static final ItemStack FILTER_BLOCK = new ItemStack(ModBlocks.FILTER_BLOCK);
@@ -39,7 +39,9 @@ public class FilterScreen extends HandledScreen<FilterScreenHandler> {
 
         receiveItemsButton = ButtonWidget.builder(Text.of(""), button -> {
             int value = handler.toggleFilterType();
-            sendFilterTypeUpdate(value);
+            BlockPos blockPos = handler.getBlockPos();
+            FilterTypePayload payload = new FilterTypePayload(blockPos, value);
+            ClientPlayNetworking.send(payload);
         }).dimensions(this.x + 6, this.y + 14, 17, 17).build();
 
         this.addDrawableChild(receiveItemsButton);
@@ -47,12 +49,6 @@ public class FilterScreen extends HandledScreen<FilterScreenHandler> {
 
     private Text getButtonText() {
         return Text.of(FilterBlockEntity.FilterTypeEnum.getName(handler.getFilterType()));
-    }
-
-    private void sendFilterTypeUpdate(int value) {
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeInt(value);
-        ClientPlayNetworking.send(new Identifier(AutomaticSorter.MOD_ID, "update_receive_items"), buf);
     }
 
     @Override

@@ -12,7 +12,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -27,7 +26,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-public class SorterControllerBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
+public class SorterControllerBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory<BlockPos> {
 
     private int ticker = 0;
     private static final int MAX_TICKER = 5;
@@ -43,11 +42,6 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
     @Override
     public DefaultedList<ItemStack> getItems() {
         return DefaultedList.ofSize(1, ItemStack.EMPTY);
-    }
-
-    @Override
-    public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
-
     }
 
     @Override
@@ -167,7 +161,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
 
     private static boolean containsItem(Inventory inventory, ItemStack item) {
         for (int i = 0; i < inventory.size(); i++) {
-            if (ItemStack.canCombine(inventory.getStack(i), item)) {
+            if (ItemStack.areItemsEqual(inventory.getStack(i), item)) {
                 return true;
             }
         }
@@ -182,7 +176,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
             if (stackInSlot.isEmpty()) {
                 to.setStack(i, item);
                 return ItemStack.EMPTY;
-            } else if (ItemStack.canCombine(stackInSlot, item)) {
+            } else if (ItemStack.areItemsEqual(stackInSlot, item)) {
                 int transferAmount = Math.min(item.getCount(), stackInSlot.getMaxCount() - stackInSlot.getCount());
                 stackInSlot.increment(transferAmount);
                 item.decrement(transferAmount);
@@ -240,5 +234,10 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
         }
 
         return filterPositions;
+    }
+
+    @Override
+    public BlockPos getScreenOpeningData(ServerPlayerEntity serverPlayerEntity) {
+        return this.pos;
     }
 }
