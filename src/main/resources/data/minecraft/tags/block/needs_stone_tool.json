@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "automaticsorter:filter",
-    "automaticsorter:sorter_controller",
-    "automaticsorter:pipe"
-  ]
-}
