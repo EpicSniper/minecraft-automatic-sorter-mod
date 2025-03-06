@@ -20,7 +20,7 @@
     }
   },
   "result": {
-    "item": "automaticsorter:sorter_controller",
+    "id": "automaticsorter:sorter_controller",
     "count": 1
   }
 }
