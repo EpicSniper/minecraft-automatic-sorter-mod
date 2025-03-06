@@ -17,7 +17,7 @@
     }
   },
   "result": {
-    "item": "automaticsorter:filter",
+    "id": "automaticsorter:filter",
     "count": 1
   }
 }
