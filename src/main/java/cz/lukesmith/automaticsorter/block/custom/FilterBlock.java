@@ -11,8 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
+import net.minecraft.state.property.EnumProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
@@ -27,7 +26,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class FilterBlock extends BlockWithEntity implements BlockEntityProvider {
 
-    public static final DirectionProperty FACING = Properties.FACING;
+    public static final EnumProperty<Direction> FACING;
+    public static final MapCodec<FilterBlock> CODEC = createCodec(FilterBlock::new);
+
+    static {
+        FACING = FacingBlock.FACING;
+    }
 
     public FilterBlock(Settings settings) {
         super(settings);
@@ -36,7 +40,7 @@ public class FilterBlock extends BlockWithEntity implements BlockEntityProvider 
 
     @Override
     protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return null;
+        return CODEC;
     }
 
     @Override
