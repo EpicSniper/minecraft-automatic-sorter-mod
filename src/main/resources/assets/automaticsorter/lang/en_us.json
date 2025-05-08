@@ -6,5 +6,12 @@
   "automaticsorter.filter_block_entity": "Filter",
   "automaticsroter.filter_mode.whitelist": "Whitelist",
   "automaticsroter.filter_mode.in_inventory": "In Inventory",
-  "automaticsorter.filter_mode.rejects": "Rejects"
+  "automaticsorter.filter_mode.rejects": "Rejects",
+  "item.automaticsorter.sorter_amplifier": "Sorter Amplifier",
+  "automaticsorter.screen_text.sorting_speed": "Sorting speed",
+
+  "message.automaticsorter.basespeed_set": "Base sorting speed set to %s items per second",
+  "message.automaticsorter.basespeedboost_set": "Base speed boost per upgrade set to %s items per second",
+  "message.automaticsorter.instantsort_set": "Instant sort set to %s",
+  "message.automaticsorter.objects_detected": "Objects detected: %s"
 }

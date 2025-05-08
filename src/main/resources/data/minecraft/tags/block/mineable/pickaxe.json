@@ -1,0 +1,7 @@
+{
+  "values": [
+    "automaticsorter:pipe",
+    "automaticsorter:filter",
+    "automaticsorter:sorter_controller"
+  ]
+}

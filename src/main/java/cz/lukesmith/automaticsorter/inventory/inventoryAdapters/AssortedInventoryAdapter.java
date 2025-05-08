@@ -1,5 +1,6 @@
-package cz.lukesmith.automaticsorter.inventory;
+package cz.lukesmith.automaticsorter.inventory.inventoryAdapters;
 
+import cz.lukesmith.automaticsorter.inventory.inventoryUtils.AssortedInventoryUtil;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 
@@ -25,7 +26,7 @@ public class AssortedInventoryAdapter implements IInventoryAdapter {
         }
 
         for (ItemStack stack : itemStacks) {
-            if (ItemStack.areItemsAndComponentsEqual(stack, itemStack)) {
+            if (compareStacks(stack, itemStack)) {
                 return stack;
             }
         }
@@ -39,22 +40,27 @@ public class AssortedInventoryAdapter implements IInventoryAdapter {
     }
 
     @Override
-    public boolean addItem(ItemStack itemStack) {
+    public int addItem(ItemStack itemStack, int maxAmount) {
         int size = itemStacks.size();
-        ItemStack tranferStack = itemStack.copyWithCount(1);
-        for (int i = 0; i < size; i++) {
+        int toTransfer = Math.min(maxAmount, itemStack.getCount());
+        int transferred = 0;
+        for (int i = 0; i < size && transferred < toTransfer; i++) {
             ItemStack stack = itemStacks.get(i);
-            if (ItemStack.areItemsAndComponentsEqual(stack, tranferStack) && stack.getCount() < stack.getMaxCount()) {
-                insertItem(i, tranferStack);
-                return true;
+            if (canCombineStacks(stack, itemStack) && stack.getCount() < stack.getMaxCount()) {
+                int canAdd = Math.min(toTransfer - transferred, stack.getMaxCount() - stack.getCount());
+                ItemStack addStack = itemStack.copyWithCount(canAdd);
+                insertItem(i, addStack);
+                transferred += canAdd;
             } else if (stack.isEmpty()) {
-                insertItem(i, tranferStack);
-                return true;
+                int put = toTransfer - transferred;
+                ItemStack newStack = itemStack.copyWithCount(put);
+                insertItem(i, newStack);
+                transferred += put;
             }
         }
-
-        return false;
+        return transferred;
     }
+
 
     @Override
     public ArrayList<ItemStack> getAllStacks() {
@@ -68,8 +74,8 @@ public class AssortedInventoryAdapter implements IInventoryAdapter {
 
     private void extractItem(int index, int amount) {
         try {
-            Object storageHandler = InventoryUtils.getAssortedStorageItemStackStorageHandler(this.blockEntity);
-            Class<?> itemStackStorageHandlerClass = Class.forName(InventoryUtils.getAssortedStorageItemStackStorageHandlerClassName());
+            Object storageHandler = AssortedInventoryUtil.getAssortedStorageItemStackStorageHandler(this.blockEntity);
+            Class<?> itemStackStorageHandlerClass = Class.forName(AssortedInventoryUtil.STORAGE_HANDLER_CLASSNAME);
             Method insertItemMethod = itemStackStorageHandlerClass.getDeclaredMethod("extractItem", int.class, int.class, boolean.class);
             insertItemMethod.invoke(storageHandler, index, amount, false);
         } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
@@ -80,8 +86,8 @@ public class AssortedInventoryAdapter implements IInventoryAdapter {
 
     private void insertItem(int index, ItemStack itemstack) {
         try {
-            Object storageHandler = InventoryUtils.getAssortedStorageItemStackStorageHandler(this.blockEntity);
-            Class<?> itemStackStorageHandlerClass = Class.forName(InventoryUtils.getAssortedStorageItemStackStorageHandlerClassName());
+            Object storageHandler = AssortedInventoryUtil.getAssortedStorageItemStackStorageHandler(this.blockEntity);
+            Class<?> itemStackStorageHandlerClass = Class.forName(AssortedInventoryUtil.STORAGE_HANDLER_CLASSNAME);
             Method insertItemMethod = itemStackStorageHandlerClass.getDeclaredMethod("insertItem", int.class, ItemStack.class, boolean.class);
             insertItemMethod.invoke(storageHandler, index, itemstack, false);
         } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException |

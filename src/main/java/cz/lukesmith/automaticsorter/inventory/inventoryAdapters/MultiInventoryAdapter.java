@@ -1,4 +1,4 @@
-package cz.lukesmith.automaticsorter.inventory;
+package cz.lukesmith.automaticsorter.inventory.inventoryAdapters;
 
 import net.minecraft.item.ItemStack;
 
@@ -43,14 +43,18 @@ public class MultiInventoryAdapter implements IInventoryAdapter {
     }
 
     @Override
-    public boolean addItem(ItemStack itemStack) {
+    public int addItem(ItemStack itemStack, int maxAmount) {
+        int toTransfer = Math.min(maxAmount, itemStack.getCount());
+        int transferred = 0;
         for (IInventoryAdapter inventoryAdapter : inventoryAdapters) {
-            if (inventoryAdapter.addItem(itemStack)) {
-                return true;
+            int added = inventoryAdapter.addItem(itemStack, toTransfer - transferred);
+            transferred += added;
+            if (transferred >= toTransfer) {
+                break;
             }
         }
 
-        return false;
+        return transferred;
     }
 
     public void addInventoryAdapter(IInventoryAdapter inventoryAdapter) {

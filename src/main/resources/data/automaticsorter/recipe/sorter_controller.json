@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "1": "minecraft:iron_ingot",
+    "2": "minecraft:comparator",
+    "3": "minecraft:hopper",
+    "4": "automaticsorter:pipe"
+  },
+  "pattern": [
+    "121",
+    "131",
+    " 4 "
+  ],
+  "result": {
+    "count": 1,
+    "id": "automaticsorter:sorter_controller"
+  }
+}

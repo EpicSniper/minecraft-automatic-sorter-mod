@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "1": "minecraft:quartz",
+    "2": "minecraft:redstone",
+    "3": "minecraft:gold_nugget"
+  },
+  "pattern": [
+    " 1 ",
+    " 2 ",
+    " 3 "
+  ],
+  "result": {
+    "count": 1,
+    "id": "automaticsorter:sorter_amplifier"
+  }
+}

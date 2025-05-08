@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "1": "minecraft:copper_ingot"
+  },
+  "pattern": [
+    "111",
+    " 1 ",
+    "111"
+  ],
+  "result": {
+    "count": 2,
+    "id": "automaticsorter:pipe"
+  }
+}

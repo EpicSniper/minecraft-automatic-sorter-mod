@@ -1,7 +1,30 @@
 {
   "variants": {
-    "": {
+    "facing=north": {
+      "model": "automaticsorter:block/sorter_controller",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "automaticsorter:block/sorter_controller",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "automaticsorter:block/sorter_controller",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "automaticsorter:block/sorter_controller",
+      "x": 90,
+      "y": 90
+    },
+    "facing=up": {
       "model": "automaticsorter:block/sorter_controller"
+    },
+    "facing=down": {
+      "model": "automaticsorter:block/sorter_controller",
+      "x": 180
     }
   }
 }

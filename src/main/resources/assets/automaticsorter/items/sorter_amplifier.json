@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "automaticsorter:item/sorter_amplifier"
+  }
+}

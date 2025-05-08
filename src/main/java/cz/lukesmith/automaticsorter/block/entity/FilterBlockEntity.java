@@ -111,15 +111,6 @@ public class FilterBlockEntity extends BlockEntity implements ImplementedInvento
         this.markDirty();
     }
 
-    public boolean isItemInInventory(ItemStack singleItem) {
-        for (ItemStack stack : inventory) {
-            if (!stack.isEmpty() && ItemStack.areItemsAndComponentsEqual(stack, singleItem)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public enum FilterTypeEnum {
         WHITELIST(0),
         IN_INVENTORY(1),

@@ -6,5 +6,12 @@
   "automaticsorter.filter_block_entity": "Фильтр",
   "automaticsroter.filter_mode.whitelist": "Белый список",
   "automaticsroter.filter_mode.in_inventory": "В инвентаре",
-  "automaticsorter.filter_mode.rejects": "Исключение"
+  "automaticsorter.filter_mode.rejects": "Исключение",
+  "item.automaticsorter.sorter_amplifier": "Усилитель сортировщика",
+  "automaticsorter.screen_text.sorting_speed": "Скорость сортировки",
+
+  "message.automaticsorter.basespeed_set": "Базовая скорость сортировки установлена на %s предметов в секунду",
+  "message.automaticsorter.basespeedboost_set": "Базовое ускорение за улучшение установлено на %s предметов в секунду",
+  "message.automaticsorter.instantsort_set": "Мгновенная сортировка установлена на %s",
+  "message.automaticsorter.objects_detected": "Объектов обнаружено: %s"
 }

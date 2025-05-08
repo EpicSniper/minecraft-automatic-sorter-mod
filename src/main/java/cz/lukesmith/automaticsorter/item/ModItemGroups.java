@@ -19,6 +19,7 @@ public class ModItemGroups {
                         entries.add(ModBlocks.PIPE_BLOCK);
                         entries.add(ModBlocks.SORTER_CONTROLLER_BLOCK);
                         entries.add(ModBlocks.FILTER_BLOCK);
+                        entries.add(ModItems.SORTER_AMPLIFIER);
                     }).build());
 
     public static void registerItemGroups() {

@@ -2,16 +2,23 @@ package cz.lukesmith.automaticsorter.block.entity;
 
 import cz.lukesmith.automaticsorter.block.custom.FilterBlock;
 import cz.lukesmith.automaticsorter.block.custom.PipeBlock;
-import cz.lukesmith.automaticsorter.inventory.IInventoryAdapter;
-import cz.lukesmith.automaticsorter.inventory.InventoryUtils;
-import cz.lukesmith.automaticsorter.inventory.NoInventoryAdapter;
+import cz.lukesmith.automaticsorter.block.custom.SorterControllerBlock;
+import cz.lukesmith.automaticsorter.config.ModConfig;
+import cz.lukesmith.automaticsorter.inventory.inventoryAdapters.IInventoryAdapter;
+import cz.lukesmith.automaticsorter.inventory.inventoryAdapters.NoInventoryAdapter;
+import cz.lukesmith.automaticsorter.inventory.inventoryUtils.MainInventoryUtil;
+import cz.lukesmith.automaticsorter.item.ModItems;
+import cz.lukesmith.automaticsorter.screen.SorterControllerScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -23,10 +30,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class SorterControllerBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
+public class SorterControllerBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPos>, ImplementedInventory {
 
     private int ticker = 0;
     private static final int MAX_TICKER = 5;
+    private double overflow = 0;
+    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(1, ItemStack.EMPTY);
 
     public SorterControllerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SORTER_CONTROLLER_BLOCK_ENTITY, pos, state);
@@ -38,7 +47,19 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
 
     @Override
     public DefaultedList<ItemStack> getItems() {
-        return DefaultedList.ofSize(1, ItemStack.EMPTY);
+        return inventory;
+    }
+
+    @Override
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.writeNbt(nbt, registryLookup);
+        Inventories.writeNbt(nbt, inventory, registryLookup);
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
+        Inventories.readNbt(nbt, inventory, registryLookup);
     }
 
     @Override
@@ -48,19 +69,20 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
 
     @Override
     public Text getDisplayName() {
-        return null;
+        return Text.translatable("block.automaticsorter.sorter_controller");
     }
 
     @Override
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return null;
+        return new SorterControllerScreenHandler(syncId, playerInventory, this.pos);
     }
 
-    private static boolean tryWhitelistMode(IInventoryAdapter rootInventoryAdapter, IInventoryAdapter chestInventoryAdapter, IInventoryAdapter filterInventoryAdapter) {
+    private static int tryWhitelistMode(IInventoryAdapter rootInventoryAdapter, IInventoryAdapter chestInventoryAdapter, IInventoryAdapter filterInventoryAdapter, int maxTransfer) {
         if (rootInventoryAdapter.isEmpty()) {
-            return false;
+            return maxTransfer;
         }
 
+        int transferLeft = maxTransfer;
         ArrayList<ItemStack> stacks = rootInventoryAdapter.getAllStacks();
         int stackSize = stacks.size();
         for (int i = 0; i < stackSize; i++) {
@@ -71,20 +93,26 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
 
             ItemStack containItemStack = filterInventoryAdapter.containsItem(rootInventoryItemStack);
             if (!containItemStack.isEmpty()) {
-                if (chestInventoryAdapter.addItem(rootInventoryItemStack)) {
-                    rootInventoryAdapter.removeItem(i, 1);
-                    return true;
+                int transferedInStack = chestInventoryAdapter.addItem(rootInventoryItemStack, transferLeft);
+                transferLeft -= transferedInStack;
+                if (transferedInStack > 0) {
+                    rootInventoryAdapter.removeItem(i, transferedInStack);
+                    if (transferLeft <= 0) {
+                        return 0;
+                    }
                 }
             }
         }
 
-        return false;
+        return transferLeft;
     }
 
-    private static boolean tryInInventoryMode(IInventoryAdapter rootInventoryAdapter, IInventoryAdapter chestInventoryAdapter) {
+    private static int tryInInventoryMode(IInventoryAdapter rootInventoryAdapter, IInventoryAdapter chestInventoryAdapter, int maxTransfer) {
         if (rootInventoryAdapter.isEmpty()) {
-            return false;
+            return maxTransfer;
         }
+
+        int transferLeft = maxTransfer;
 
         ArrayList<ItemStack> stacks = rootInventoryAdapter.getAllStacks();
         int stackSize = stacks.size();
@@ -96,20 +124,26 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
 
             ItemStack containItemStack = chestInventoryAdapter.containsItem(rootInventoryItemStack);
             if (!containItemStack.isEmpty()) {
-                if (chestInventoryAdapter.addItem(rootInventoryItemStack)) {
-                    rootInventoryAdapter.removeItem(i, 1);
-                    return true;
+                int transferedInStack = chestInventoryAdapter.addItem(rootInventoryItemStack, transferLeft);
+                transferLeft -= transferedInStack;
+                if (transferedInStack > 0) {
+                    rootInventoryAdapter.removeItem(i, transferedInStack);
+                    if (transferLeft <= 0) {
+                        return 0;
+                    }
                 }
             }
         }
 
-        return false;
+        return transferLeft;
     }
 
-    private static boolean tryRejectsMode(IInventoryAdapter rootInventoryAdapter, IInventoryAdapter chestInventoryAdapter) {
+    private static int tryRejectsMode(IInventoryAdapter rootInventoryAdapter, IInventoryAdapter chestInventoryAdapter, int maxTransfer) {
         if (rootInventoryAdapter.isEmpty()) {
-            return false;
+            return maxTransfer;
         }
+
+        int transferLeft = maxTransfer;
 
         ArrayList<ItemStack> stacks = rootInventoryAdapter.getAllStacks();
         int stackSize = stacks.size();
@@ -119,34 +153,62 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                 continue;
             }
 
-            if (chestInventoryAdapter.addItem(rootInventoryItemStack)) {
-                rootInventoryAdapter.removeItem(i, 1);
-                return true;
+            int transferedInStack = chestInventoryAdapter.addItem(rootInventoryItemStack, transferLeft);
+            transferLeft -= transferedInStack;
+            if (transferedInStack > 0) {
+                rootInventoryAdapter.removeItem(i, transferedInStack);
+                if (transferLeft <= 0) {
+                    return 0;
+                }
             }
         }
 
-        return false;
+        return transferLeft;
     }
 
-    private static boolean tryToTransferItem(World world, FilterBlockEntity filterBlockEntity, BlockPos filterPos, IInventoryAdapter rootInventoryAdapter) {
+    private static int tryToTransferItem(World world, FilterBlockEntity filterBlockEntity, BlockPos filterPos, IInventoryAdapter rootInventoryAdapter, int maxTransfer) {
         Direction filterDirection = world.getBlockState(filterPos).get(FilterBlock.FACING);
         BlockPos chestPos = filterPos.offset(filterDirection);
-        IInventoryAdapter chestInventoryAdapter = InventoryUtils.getInventoryAdapter(world, chestPos);
+        IInventoryAdapter chestInventoryAdapter = MainInventoryUtil.getInventoryAdapter(world, chestPos);
         if (chestInventoryAdapter instanceof NoInventoryAdapter) {
-            return false;
+            return maxTransfer;
         }
 
         int filterType = filterBlockEntity.getFilterType();
         return switch (FilterBlockEntity.FilterTypeEnum.fromValue(filterType)) {
             case WHITELIST -> {
-                IInventoryAdapter filterInventoryAdapter = InventoryUtils.getInventoryAdapter(world, filterPos);
-                yield tryWhitelistMode(rootInventoryAdapter, chestInventoryAdapter, filterInventoryAdapter);
+                IInventoryAdapter filterInventoryAdapter = MainInventoryUtil.getInventoryAdapter(world, filterPos);
+                yield tryWhitelistMode(rootInventoryAdapter, chestInventoryAdapter, filterInventoryAdapter, maxTransfer);
             }
-            case IN_INVENTORY -> tryInInventoryMode(rootInventoryAdapter, chestInventoryAdapter);
-            case REJECTS -> tryRejectsMode(rootInventoryAdapter, chestInventoryAdapter);
-            default -> false;
+            case IN_INVENTORY -> tryInInventoryMode(rootInventoryAdapter, chestInventoryAdapter, maxTransfer);
+            case REJECTS -> tryRejectsMode(rootInventoryAdapter, chestInventoryAdapter, maxTransfer);
+            default -> maxTransfer;
         };
 
+    }
+
+
+    private int getAmplifierCount() {
+        if (!this.getStack(0).isEmpty() && this.getStack(0).getItem().equals(ModItems.SORTER_AMPLIFIER)) {
+            return this.getStack(0).getCount();
+        }
+
+        return 0;
+    }
+
+    public double getSpeedPerSecond() {
+        if (ModConfig.get().instantSort) {
+            return Double.MAX_VALUE;
+        }
+
+        double baseSpeed = ModConfig.get().baseSortingSpeed;
+        double speedBoost = getAmplifierCount() * ModConfig.get().baseSpeedBoostPerUpgrade;
+
+        return baseSpeed + speedBoost;
+    }
+
+    public double getSpeedPerTick() {
+        return getSpeedPerSecond() / 20.0;
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
@@ -159,19 +221,28 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
             return;
         }
 
+        double speed = getSpeedPerTick() * MAX_TICKER;
+        int maxTransfer = (int) Math.floor(speed + overflow);
+        overflow = (speed + overflow) - maxTransfer;
+
+        if (ModConfig.get().instantSort && overflow != 0) {
+            overflow = 0;
+        }
+
         Set<BlockPos> visited = new HashSet<>();
-        BlockPos belowPos = pos.down();
+        Direction facing = world.getBlockState(pos).get(SorterControllerBlock.FACING);
+        BlockPos nextPos = pos.offset(facing.getOpposite());
 
-        if ((world.getBlockState(belowPos).getBlock() instanceof PipeBlock)) {
+        if ((world.getBlockState(nextPos).getBlock() instanceof PipeBlock)) {
             Queue<BlockPos> queue = new LinkedList<>();
-            queue.add(belowPos);
+            queue.add(nextPos);
 
-            IInventoryAdapter rootInventoryAdapter = InventoryUtils.getInventoryAdapter(world, pos.up());
+            IInventoryAdapter rootInventoryAdapter = MainInventoryUtil.getInventoryAdapter(world, pos.offset(facing));
             boolean noInventoryRootChest = rootInventoryAdapter instanceof NoInventoryAdapter;
-            boolean itemTransfered = false;
+            int itemsLeftToTransfer = maxTransfer;
             ArrayList<FilterBlockEntity> rejectedFilters = new ArrayList<>();
 
-            while (!queue.isEmpty() && !itemTransfered && !noInventoryRootChest) {
+            while (!queue.isEmpty() && (itemsLeftToTransfer >= 0) && !noInventoryRootChest) {
                 BlockPos currentPos = queue.poll();
                 if (visited.contains(currentPos)) {
                     continue;
@@ -196,8 +267,8 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                                 continue;
                             }
 
-                            if (tryToTransferItem(world, filterBlockEntity, neighborPos, rootInventoryAdapter)) {
-                                itemTransfered = true;
+                            itemsLeftToTransfer = tryToTransferItem(world, filterBlockEntity, neighborPos, rootInventoryAdapter, itemsLeftToTransfer);
+                            if (itemsLeftToTransfer == 0) {
                                 break;
                             }
                         }
@@ -205,9 +276,10 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
                 }
             }
 
-            if (!itemTransfered) {
+            if (itemsLeftToTransfer >= 0) {
                 for (FilterBlockEntity filterBlockEntity : rejectedFilters) {
-                    if (tryToTransferItem(world, filterBlockEntity, filterBlockEntity.getPos(), rootInventoryAdapter)) {
+                    itemsLeftToTransfer = tryToTransferItem(world, filterBlockEntity, filterBlockEntity.getPos(), rootInventoryAdapter, itemsLeftToTransfer);
+                    if (itemsLeftToTransfer >= 0) {
                         break;
                     }
                 }
