@@ -47,7 +47,7 @@ public class ModCommands {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(CommandManager.literal("as_basespeed")
-                .requires(src -> src.hasPermissionLevel(2))
+                //.requires(src -> src.hasPermissionLevel(2))
                 .then(CommandManager.argument("value", DoubleArgumentType.doubleArg(0, Double.MAX_VALUE))
                     .executes(ctx -> {
                         double value = DoubleArgumentType.getDouble(ctx, "value");
@@ -60,7 +60,7 @@ public class ModCommands {
                     })));
 
             dispatcher.register(CommandManager.literal("as_basespeedboostperupgrade")
-                .requires(src -> src.hasPermissionLevel(2))
+                //.requires(src -> src.hasPermissionLevel(2))
                 .then(CommandManager.argument("value", DoubleArgumentType.doubleArg(0, Double.MAX_VALUE))
                     .executes(ctx -> {
                         double value = DoubleArgumentType.getDouble(ctx, "value");
@@ -73,7 +73,7 @@ public class ModCommands {
                     })));
 
             dispatcher.register(CommandManager.literal("as_instantsort")
-                .requires(src -> src.hasPermissionLevel(2))
+                //.requires(src -> src.hasPermissionLevel(2))
                 .then(CommandManager.argument("value", BoolArgumentType.bool())
                     .executes(ctx -> {
                         boolean value = BoolArgumentType.getBool(ctx, "value");
@@ -86,7 +86,7 @@ public class ModCommands {
                     })));
 
             dispatcher.register(CommandManager.literal("as_exportModBlocks")
-                .requires(src -> src.hasPermissionLevel(2))
+                //.requires(src -> src.hasPermissionLevel(2))
                 .then(CommandManager.argument("radius", IntegerArgumentType.integer())
                     .executes(ctx -> {
                         ServerCommandSource source = ctx.getSource();
@@ -183,7 +183,7 @@ public class ModCommands {
 
             if (AutomaticSorter.isDevEnvironment()) {
                 dispatcher.register(CommandManager.literal("as_importModBlocks")
-                    .requires(src -> src.hasPermissionLevel(2))
+                    //.requires(src -> src.hasPermissionLevel(2))
                     .executes(ctx -> {
                         ServerCommandSource source = ctx.getSource();
                         ServerWorld world = source.getWorld();
@@ -268,7 +268,6 @@ public class ModCommands {
 
     private static BlockState parseBlockState(Block block, String propertiesString) {
         BlockState state = block.getDefaultState();
-        // Najdi část v hranatých závorkách
         int start = propertiesString.indexOf('[');
         int end = propertiesString.indexOf(']');
         if (start != -1 && end != -1 && end > start) {
