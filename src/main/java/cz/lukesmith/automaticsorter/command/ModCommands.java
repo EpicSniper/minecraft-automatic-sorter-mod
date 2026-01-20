@@ -19,7 +19,7 @@ public class ModCommands {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         event.getDispatcher().register(Commands.literal("as_basespeed")
-                .requires(src -> src.hasPermission(2))
+                //.requires(src -> src.permissions(2))
                 .then(Commands.argument("value", DoubleArgumentType.doubleArg(0, Double.MAX_VALUE))
                         .executes(ctx -> {
                             double value = DoubleArgumentType.getDouble(ctx, "value");
@@ -32,7 +32,7 @@ public class ModCommands {
                         })));
 
         event.getDispatcher().register(Commands.literal("as_basespeedboostperupgrade")
-                .requires(src -> src.hasPermission(2))
+                //.requires(src -> src.hasPermission(2))
                 .then(Commands.argument("value", DoubleArgumentType.doubleArg(0, Double.MAX_VALUE))
                         .executes(ctx -> {
                             double value = DoubleArgumentType.getDouble(ctx, "value");
@@ -45,7 +45,7 @@ public class ModCommands {
                         })));
 
         event.getDispatcher().register(Commands.literal("as_instantsort")
-                .requires(src -> src.hasPermission(2))
+                //.requires(src -> src.hasPermission(2))
                 .then(Commands.argument("value", BoolArgumentType.bool())
                         .executes(ctx -> {
                             boolean value = BoolArgumentType.getBool(ctx, "value");
