@@ -276,7 +276,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements MenuProv
                             }
 
                             itemsLeftToTransfer = tryToTransferItem(world, filterBlockEntity, neighborPos, rootInventoryAdapter, itemsLeftToTransfer);
-                            if (itemsLeftToTransfer >= 0) {
+                            if (itemsLeftToTransfer == 0) {
                                 break;
                             }
                         }
