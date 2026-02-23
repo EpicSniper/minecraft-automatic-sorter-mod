@@ -38,7 +38,7 @@ public class AutomaticSorter {
         FMLCommonSetupEvent.getBus(modEventBus).addListener(this::commonSetup);
 
         // Creative tab population
-        BuildCreativeModeTabContentsEvent.getBus(modEventBus).addListener(AutomaticSorter::addCreative);
+        BuildCreativeModeTabContentsEvent.BUS.addListener(AutomaticSorter::addCreative);
 
         // ServerStartingEvent registration
         ServerStartingEvent.BUS.addListener(this::onServerStarting);
