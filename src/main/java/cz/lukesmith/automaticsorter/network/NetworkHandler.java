@@ -2,8 +2,7 @@ package cz.lukesmith.automaticsorter.network;
 
 import cz.lukesmith.automaticsorter.AutomaticSorter;
 import cz.lukesmith.automaticsorter.config.ModConfig;
-import cz.lukesmith.automaticsorter.screen.ModScreenHandlers;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
@@ -15,7 +14,7 @@ import net.minecraftforge.network.SimpleChannel;
 @Mod.EventBusSubscriber
 public class NetworkHandler {
     private static final String CHANNEL_NAME = "main";
-    public static final SimpleChannel CHANNEL = ChannelBuilder.named(ResourceLocation.tryBuild(AutomaticSorter.MOD_ID, CHANNEL_NAME))
+    public static final SimpleChannel CHANNEL = ChannelBuilder.named(Identifier.tryBuild(AutomaticSorter.MOD_ID, CHANNEL_NAME))
             .simpleChannel();
 
     private static int packetId = 0;

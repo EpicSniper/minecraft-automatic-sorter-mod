@@ -5,12 +5,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class SorterControllerScreen extends AbstractContainerScreen<SorterControllerScreenHandler> {
 
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(AutomaticSorter.MOD_ID, "textures/gui/sorter_controller.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(AutomaticSorter.MOD_ID, "textures/gui/sorter_controller.png");
 
     public SorterControllerScreen(SorterControllerScreenHandler handler, Inventory inv, Component title) {
         super(handler, inv, title);

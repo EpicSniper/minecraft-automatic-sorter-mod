@@ -2,8 +2,8 @@ package cz.lukesmith.automaticsorter.item;
 
 import cz.lukesmith.automaticsorter.AutomaticSorter;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.registries.DeferredRegister;
@@ -19,7 +19,7 @@ public class ModItems {
 
     public static RegistryObject<Item> registerItem(String name, Function<Item.Properties, Item> function) {
         return ModItems.ITEMS.register(name, () -> function.apply(new Item.Properties()
-                .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(AutomaticSorter.MOD_ID, name)))));
+                .setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(AutomaticSorter.MOD_ID, name)))));
     }
 
     public static void register(BusGroup eventBus) {
