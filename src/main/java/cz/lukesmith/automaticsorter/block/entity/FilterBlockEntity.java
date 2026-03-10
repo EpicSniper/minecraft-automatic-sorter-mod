@@ -6,10 +6,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -27,11 +27,9 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 
 public class FilterBlockEntity extends BlockEntity implements MenuProvider {
 
@@ -45,7 +43,7 @@ public class FilterBlockEntity extends BlockEntity implements MenuProvider {
         protected void onContentsChanged(int slot) {
             setChanged();
             if (level != null && !level.isClientSide()) {
-                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
             }
         }
     };
@@ -138,15 +136,18 @@ public class FilterBlockEntity extends BlockEntity implements MenuProvider {
     @Override
     protected void loadAdditional(ValueInput pInput) {
         super.loadAdditional(pInput);
-        NonNullList<ItemStack> items = NonNullList.withSize(inventory.getSlots(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(pInput, items);
-
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            inventory.setStackInSlot(i, items.get(i));
-        }
+        this.loadAdditionalInventory(pInput);
 
         filterType = pInput.getInt("FilterType").orElse(0);
         this.setChanged();
+    }
+
+    private void loadAdditionalInventory(ValueInput pInput) {
+        NonNullList<ItemStack> items = NonNullList.withSize(inventory.getSlots(), ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(pInput, items);
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            inventory.setStackInSlot(i, items.get(i));
+        }
     }
 
     @Override
@@ -211,6 +212,33 @@ public class FilterBlockEntity extends BlockEntity implements MenuProvider {
                 return 1;
             }
         });
+    }
+
+    @Override
+    public void onDataPacket(Connection connection, ValueInput data, HolderLookup.Provider lookup) {
+        super.onDataPacket(connection, data, lookup);
+        loadAdditional(data);
+    }
+
+    @Override
+    public @NonNull CompoundTag getUpdateTag(HolderLookup.@NonNull Provider lookup) {
+        CompoundTag tag = new CompoundTag();
+        tag.put("inventory", inventory.serializeNBT(lookup));
+        tag.putInt("FilterType", filterType);
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(ValueInput tag, HolderLookup.Provider holders) {
+        extracted(tag, holders);
+        ValueInput tagInput = tag.childOrEmpty("inventory");
+        this.loadAdditionalInventory(tagInput);
+
+        this.filterType = tag.getIntOr("FilterType", 0);
+    }
+
+    private void extracted(ValueInput tag, HolderLookup.Provider holders) {
+        super.handleUpdateTag(tag, holders);
     }
 
     public enum FilterTypeEnum {

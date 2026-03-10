@@ -12,12 +12,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import org.jspecify.annotations.NonNull;
 
 public class FilterScreenHandler extends AbstractContainerMenu {
 
     private final FilterBlockEntity blockEntity;
     private final Level level;
-    private final ContainerData propertyDelegate;
 
     private static final int HOTBAR_SLOT_COUNT = 9;
     private static final int PLAYER_INVENTORY_ROW_COUNT = 3;
@@ -40,7 +40,6 @@ public class FilterScreenHandler extends AbstractContainerMenu {
 
         this.blockEntity = filterBe;
         this.level = playerInventory.player.level();
-        this.propertyDelegate = data;
 
         // Přidej sloty z block entity
         ItemStackHandler inventory = blockEntity.getInventory(); // přístup k ItemStackHandler
@@ -77,12 +76,12 @@ public class FilterScreenHandler extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NonNull Player player) {
         return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()), player, ModBlocks.FILTER_BLOCK.get());
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
+    public @NonNull ItemStack quickMoveStack(@NonNull Player player, int index) {
         Slot sourceSlot = this.slots.get(index);
         if (sourceSlot == null || !sourceSlot.hasItem()) return ItemStack.EMPTY;
 
@@ -114,12 +113,12 @@ public class FilterScreenHandler extends AbstractContainerMenu {
     }
 
     public int getFilterType() {
-        return propertyDelegate.get(0);
+        return blockEntity.getFilterType();
     }
 
     public int toggleFilterType() {
         int value = FilterBlockEntity.FilterTypeEnum.nextValue(this.getFilterType());
-        propertyDelegate.set(0, value);
+        blockEntity.setFilterType(value);
         blockEntity.setChanged();
         return value;
     }

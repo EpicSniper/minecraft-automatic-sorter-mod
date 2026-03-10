@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.network.PacketDistributor;
 
-import java.util.Collections;
 import java.util.List;
 
 public class FilterScreen extends AbstractContainerScreen<FilterScreenHandler> {

@@ -10,9 +10,9 @@ import cz.lukesmith.automaticsorter.inventory.inventoryUtils.MainInventoryUtil;
 import cz.lukesmith.automaticsorter.item.ModItems;
 import cz.lukesmith.automaticsorter.screen.SorterControllerScreenHandler;
 import net.minecraft.core.*;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -27,6 +27,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
@@ -35,7 +36,15 @@ public class SorterControllerBlockEntity extends BlockEntity implements MenuProv
     private int ticker = 0;
     private static final int MAX_TICKER = 5;
     private double overflow = 0;
-    private final ItemStackHandler inventory = new ItemStackHandler(1);
+    private final ItemStackHandler inventory = new ItemStackHandler(1) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+            if (level != null && !level.isClientSide()) {
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+            }
+        }
+    };
 
     public SorterControllerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SORTER_CONTROLLER_BLOCK_ENTITY.get(), pos, state);
@@ -50,20 +59,23 @@ public class SorterControllerBlockEntity extends BlockEntity implements MenuProv
     }
 
     @Override
-    protected void loadAdditional(ValueInput pInput) {
+    protected void loadAdditional(@NonNull ValueInput pInput) {
         super.loadAdditional(pInput);
-        NonNullList<ItemStack> items = NonNullList.withSize(inventory.getSlots(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(pInput, items);
-
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            inventory.setStackInSlot(i, items.get(i));
-        }
+        this.loadAdditionalInventory(pInput);
 
         this.setChanged();
     }
 
+    private void loadAdditionalInventory(ValueInput pInput) {
+        NonNullList<ItemStack> items = NonNullList.withSize(inventory.getSlots(), ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(pInput, items);
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            inventory.setStackInSlot(i, items.get(i));
+        }
+    }
+
     @Override
-    protected void saveAdditional(ValueOutput pOutput) {
+    protected void saveAdditional(@NonNull ValueOutput pOutput) {
         super.saveAdditional(pOutput);
         NonNullList<ItemStack> items = NonNullList.withSize(inventory.getSlots(), ItemStack.EMPTY);
         for (int i = 0; i < inventory.getSlots(); i++) {
@@ -79,7 +91,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements MenuProv
     }
 
     @Override
-    public @Nullable AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
+    public @Nullable AbstractContainerMenu createMenu(int pContainerId, @NonNull Inventory pPlayerInventory, @NonNull Player pPlayer) {
         return new SorterControllerScreenHandler(pContainerId, pPlayerInventory, this);
     }
 
@@ -196,7 +208,7 @@ public class SorterControllerBlockEntity extends BlockEntity implements MenuProv
 
 
     private int getAmplifierCount() {
-        if (!this.inventory.getStackInSlot(0).isEmpty() && this.inventory.getStackInSlot(0).getItem().equals(ModItems.SORTER_AMPLIFIER)) {
+        if (!this.inventory.getStackInSlot(0).isEmpty() && this.inventory.getStackInSlot(0).getItem().equals(ModItems.SORTER_AMPLIFIER.get())) {
             return this.inventory.getStackInSlot(0).getCount();
         }
 
@@ -298,7 +310,26 @@ public class SorterControllerBlockEntity extends BlockEntity implements MenuProv
     }
 
     @Override
+    public @NonNull CompoundTag getUpdateTag(HolderLookup.@NonNull Provider lookup) {
+        CompoundTag tag = new CompoundTag();
+        tag.put("inventory", inventory.serializeNBT(lookup));
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(ValueInput tag, HolderLookup.Provider holders) {
+        extracted(tag, holders);
+        ValueInput tagInput = tag.childOrEmpty("inventory");
+        this.loadAdditionalInventory(tagInput);
+    }
+
+    private void extracted(ValueInput tag, HolderLookup.Provider holders) {
+        super.handleUpdateTag(tag, holders);
+    }
+
+    @Override
     public void onDataPacket(Connection connection, ValueInput data, HolderLookup.Provider lookup) {
         super.onDataPacket(connection, data, lookup);
+        loadAdditional(data);
     }
 }
