@@ -170,8 +170,9 @@ public class SorterControllerBlockEntity extends BlockEntity implements Extended
             boolean noInventoryRootChest = rootInventoryAdapter instanceof NoInventoryAdapter;
             boolean itemTransfered = false;
             ArrayList<FilterBlockEntity> rejectedFilters = new ArrayList<>();
+            boolean isRootInventoryEmpty = rootInventoryAdapter.isEmpty();
 
-            while (!queue.isEmpty() && !itemTransfered && !noInventoryRootChest) {
+            while (!queue.isEmpty() && !itemTransfered && !noInventoryRootChest && !isRootInventoryEmpty) {
                 BlockPos currentPos = queue.poll();
                 if (visited.contains(currentPos)) {
                     continue;

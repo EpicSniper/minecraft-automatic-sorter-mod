@@ -17,6 +17,11 @@ public interface IInventoryAdapter {
     int getSize();
 
     default boolean isEmpty() {
-        return getAllStacks().isEmpty();
+        for (ItemStack stack : getAllStacks()) {
+            if (!stack.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
