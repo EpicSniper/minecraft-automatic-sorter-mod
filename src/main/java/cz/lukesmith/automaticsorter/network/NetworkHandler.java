@@ -1,26 +1,11 @@
 package cz.lukesmith.automaticsorter.network;
 
-import cz.lukesmith.automaticsorter.AutomaticSorter;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.ChannelBuilder;
-import net.minecraftforge.network.SimpleChannel;
-
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class NetworkHandler {
-    private static final String CHANNEL_NAME = "main";
-    public static final SimpleChannel CHANNEL = ChannelBuilder.named(ResourceLocation.tryBuild(AutomaticSorter.MOD_ID, CHANNEL_NAME))
-            .simpleChannel();
-
-    private static int packetId = 0;
-
-    public static void register() {
-        CHANNEL.messageBuilder(FilterTypePacket.class, packetId++)
-                .encoder(FilterTypePacket::encode)
-                .decoder(FilterTypePacket::decode)
-                .consumer(FilterTypePacket::handle)
-                .add();
+    public static void register(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar("1");
+        registrar.playToServer(FilterTypePayload.TYPE, FilterTypePayload.STREAM_CODEC, FilterTypePayload::handle);
     }
 }
-
-
-

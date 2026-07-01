@@ -2,12 +2,10 @@ package cz.lukesmith.automaticsorter.block.entity;
 
 import cz.lukesmith.automaticsorter.screen.FilterScreenHandler;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
-import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -17,11 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -43,23 +37,7 @@ public class FilterBlockEntity extends BlockEntity implements MenuProvider {
         }
     };
 
-    private final LazyOptional<IItemHandler> inventoryCap = LazyOptional.of(() -> inventory);
-
     private int filterType = FilterTypeEnum.IN_INVENTORY.getValue();
-
-    @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return inventoryCap.cast(); // vrátí inventář
-        }
-        return super.getCapability(cap, side);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        inventoryCap.invalidate(); // nutné pro uvolnění paměti při zničení bloku
-    }
 
     public ItemStackHandler getInventory() {
         return inventory;

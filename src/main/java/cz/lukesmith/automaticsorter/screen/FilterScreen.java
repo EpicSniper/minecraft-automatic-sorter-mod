@@ -3,19 +3,17 @@ package cz.lukesmith.automaticsorter.screen;
 import cz.lukesmith.automaticsorter.AutomaticSorter;
 import cz.lukesmith.automaticsorter.block.ModBlocks;
 import cz.lukesmith.automaticsorter.block.entity.FilterBlockEntity;
-import cz.lukesmith.automaticsorter.network.FilterTypePacket;
-import cz.lukesmith.automaticsorter.network.NetworkHandler;
+import cz.lukesmith.automaticsorter.network.FilterTypePayload;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class FilterScreen extends AbstractContainerScreen<FilterScreenHandler> {
 
@@ -50,8 +48,8 @@ public class FilterScreen extends AbstractContainerScreen<FilterScreenHandler> {
         receiveItemsButton = new Button.Builder(Component.literal(""), button -> {
             int value = menu.toggleFilterType();
             BlockPos blockPos = menu.getBlockPos();
-            FilterTypePacket payload = new FilterTypePacket(blockPos, value);
-            NetworkHandler.CHANNEL.send(payload, PacketDistributor.SERVER.noArg());
+            FilterTypePayload payload = new FilterTypePayload(blockPos, value);
+            PacketDistributor.sendToServer(payload);
         }).pos(this.leftPos + 6, this.topPos + 14).size(18, 18).build();
 
         this.addRenderableWidget(receiveItemsButton);
